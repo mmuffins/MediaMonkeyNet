@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MediaMonkeyNet
 {
-    public class Class1
+    public interface IChromeResponse
     {
     }
 }
