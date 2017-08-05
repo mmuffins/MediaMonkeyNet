@@ -9,15 +9,15 @@ namespace MediaMonkeyNet
 {
     public static class CommandFactory
     {
-        public static EvaluateCommand Create(string Expression = "")
+        public static EvaluateCommand Create(string Expression = "", bool AwaitPromise = false)
         {
             return new EvaluateCommand
             {
                 ObjectGroup = "console",
                 IncludeCommandLineAPI = true,
-                DoNotPauseOnExceptionsAndMuteConsole = false,
                 ReturnByValue = true,
-                Expression = Expression
+                AwaitPromise = AwaitPromise,
+                Expression = Expression,
             };
         }
     }

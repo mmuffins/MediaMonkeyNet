@@ -136,9 +136,12 @@ namespace MediaMonkeyNet
             try
             {
                 EvaluateCommand cmd = CommandFactory.Create(command);
-                // var vs = ws.SendAsync(cmd).Result;
-                // var xx = new EvaluateResponse((vs as CommandResponse<EvaluateCommandResponse>).Result);
-                //var ab = xx.Value as JObject;
+
+                // var result = ws.SendAsync(cmd).Result;
+                // var cmdResponse = vs as CommandResponse<EvaluateCommandResponse>;
+                // var cmdResponseResult = ab.Result;
+                // var evalResponse = new EvaluateResponse(res);
+                // var parsedObject = xx.Value as JObject;
                 return new EvaluateResponse((ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result);
             }
             catch (NullReferenceException)
@@ -150,94 +153,12 @@ namespace MediaMonkeyNet
 
         }
 
-        async public Task<string> EvalAsync(string command)
-        {
-            // Generic method to send a command to mediamonkey
-
-            string newCMD = "function(){ var list = uitools.getSelectedTracklist(); if(!list || !list.count) list = uitools.getTracklist(); if(list) return list.asJSON; return ''; }();";
-            newCMD = "app.db.getTracklist('SELECT * FROM Songs', -1).getPersistentJSON();";
-
-            newCMD = "function asdf(){var list = app.db.getTracklist('SELECT * FROM Songs', -1).whenLoaded();var prom = new Promise(function(resolve, reject) { resolve(list.asJSON) })};var xx = asdf();xx";
-            newCMD = "app.db.getQueryResultAsync('SELECT * FROM Songs')";
-            newCMD = "app.db.getTracklist('SELECT * FROM Songs', -1)";
-
-
-
-            //string cmd = "app.db.getTracklist('SELECT * FROM Songs', -1)";
-            var chromeSession = ws;
-
-            var cmd = new EvaluateCommand{
-                ObjectGroup = "console",
-                IncludeCommandLineAPI = true,
-                DoNotPauseOnExceptionsAndMuteConsole = false,
-                ReturnByValue = true,
-                Expression = "app.db.getTracklist('SELECT * FROM Songs', -1).whenLoaded()"
-            };
-
-            var response = chromeSession.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>;
-
-            Console.WriteLine(response.Result.Result.Value);
-
-
-            // newCMD = "var list = app.db.getTracklist('SELECT * FROM Songs', -1).whenLoaded();list";
-            // newCMD = "new Promise(function(resolve, reject) {resolve('promiseResolveString')});";
-            // newCMD = "new Promise(function(resolve, reject) {var list = app.db.getTracklist('SELECT * FROM Songs', -1).whenLoaded();resolve(list)})";
-
-            if (!this.HasActiveSession())
-            {
-                // No active chrome session
-                throw new NullReferenceException("No active session found");
-            }
-
-            try
-            {
-                // EvaluateCommand cmd = CommandFactory.Create(newCMD);
-                //var sdfsdf = new MasterDevs.ChromeDevTools.Protocol.Chrome.Runtime.RunCommand.
-
-                // var response2 = new EvaluateResponse((ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result);
-                // var response = ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>;
-                // if (null != response.Result)
-                // {
-                // Console.WriteLine(response.Result.Result.Value);
-                // }
-
-                // var response = ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>;
-                // var dd = response.Result.Result.Value;
-                // var response = ws.SendAsync(cmd); 
-                // var xx = await response;
-
-                string abc = "aa";
-
-                // var ab = (xx as CommandResponse<EvaluateCommandResponse>).Result.Result;
-                //var ab = xx as CommandResponse<EvaluateCommandResponse>;
-
-                // var getPropCmd = new GetPropertiesCommand();
-                // getPropCmd.ObjectId = de;
-                // getPropCmd.OwnProperties = false;
-
-                // var x2 = ws.SendAsync(getPropCmd);
-                // var x3 = await x2;
-
-
-
-                return abc;
-            }
-            catch (NullReferenceException)
-            {
-                //Session is not available anymore, update the local session accordingly
-                this.ws = null;
-                throw;
-            }
-
-        }
-
-
         public Track GetCurrentTrack()
         {
             // Returns a track object for the current track
             EvaluateResponse currentTrack = this.Evaluate("app.player.getCurrentTrack()");
 
-            if(currentTrack.WasThrown || currentTrack.Value == null)
+            if(currentTrack.Exception != null || currentTrack.Value == null)
             {
                 return null;
             }

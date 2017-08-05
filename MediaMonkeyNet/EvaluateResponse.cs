@@ -12,24 +12,18 @@ namespace MediaMonkeyNet
     {
         public object Value { get; set; }
         public string Exception { get; set; }
-        public bool WasThrown { get; set; }
 
 
-        public EvaluateResponse(object value, bool wasThrown, string exception)
+        public EvaluateResponse(object value, string exception)
         {
             this.Value = value;
-            this.WasThrown = wasThrown;
             this.Exception = exception;
         }
 
         public EvaluateResponse(EvaluateCommandResponse response)
         {
-            var xx = response.Result;
             this.Value = response.Result.Value;
-
-            this.WasThrown = (bool)response.WasThrown;
-
-            if (this.WasThrown)
+            if (response.ExceptionDetails != null)
             {
                 this.Exception = response.ExceptionDetails.Text;
             }
