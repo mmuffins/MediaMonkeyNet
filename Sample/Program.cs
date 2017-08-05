@@ -72,10 +72,10 @@ namespace Sample
                 // the commands in a try block
 
                 // var asyncString = await mediaMonkey.EvalAsync("app.db.getTracklist('SELECT * FROM Songs', -1)");
-                MyAsync(mediaMonkey);
+                // MyAsync(mediaMonkey);
 
                 var response = mediaMonkey.Play();
-                if (response.WasThrown)
+                if (response.Exception != null)
                 {
                     Console.WriteLine("An error occurred while issuing the play command:");
                     Console.WriteLine(response.Exception);
@@ -89,21 +89,9 @@ namespace Sample
                 else
                 {
                     Console.WriteLine("Current Track:");
-                    Console.Write("Title:" + currentTrack.Title);
-                    Console.Write("Artist:" + currentTrack.ArtistName);
+                    Console.WriteLine("Title:" + currentTrack.Title);
+                    Console.WriteLine("Artist:" + currentTrack.ArtistName);
                 }
-
-                // We can issue generic commands using the Evaluate function
-                // var allSongs = mediaMonkey.Evaluate("var list = uitools.getTracklist(); return list.asJSON");
-                var allSongs = mediaMonkey.Evaluate("uitools.getTracklist()");
-
-
-                var x4 = mediaMonkey.Evaluate("app.db.getTracklist('SELECT * FROM Songs', -1)");
-
-                MyAsync(mediaMonkey);
-                MyAsync(mediaMonkey);
-                MyAsync(mediaMonkey);
-
             }
             catch (Exception)
             {
@@ -111,14 +99,10 @@ namespace Sample
                 return;
             }
 
-            return;
-
             var nowPlaying = mediaMonkey.GetCurrentTrack();
             Console.WriteLine(nowPlaying.Title);
-            // Console.WriteLine(mediaMonkey.GetDefaultAction());
 
-
-
+            return;
 
             int loopCount = 1;
 
@@ -164,15 +148,6 @@ namespace Sample
             // var x4 = mediaMonkey.Evaluate("app.db.getTracklist('SELECT * FROM SXXongs', -1)");
 
             Console.ReadLine();
-        }
-
-
-        async static void MyAsync(MediaMonkeyNet.MediaMonkeyNet mm)
-        {
-            var asyncString = await mm.EvalAsync("app.db.getTracklist('SELECT * FROM Songs', -1)");
-
-            Console.Write(asyncString);
-
         }
     }
 }
