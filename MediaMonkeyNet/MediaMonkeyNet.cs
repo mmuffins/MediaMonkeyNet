@@ -23,6 +23,174 @@ namespace MediaMonkeyNet
         string SessionWSEndpoint;
         private ChromeSession ws;
 
+        public bool IsMuted
+        {
+            get
+            {
+                try
+                {
+                    var response = this.Evaluate("app.player.mute");
+                    if (response.Exception != null)
+                    {
+                        return false;
+                    }
+
+                    return (bool)response.Value;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+        }
+
+        public bool IsPaused
+        {
+            get
+            {
+                try
+                {
+                    var response = this.Evaluate("app.player.paused");
+                    if (response.Exception != null)
+                    {
+                        return false;
+                    }
+
+                    return (bool)response.Value;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+        }
+
+        public bool IsPlaying
+        {
+            get
+            {
+                try
+                {
+                    var response = this.Evaluate("app.player.isPlaying");
+                    if (response.Exception != null)
+                    {
+                        return false;
+                    }
+
+                    return (bool)response.Value;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+        }
+
+        public bool IsRepeat
+        {
+            get
+            {
+                try
+                {
+                    var response = this.Evaluate("app.player.repeatPlaylist");
+                    if (response.Exception != null)
+                    {
+                        return false;
+                    }
+
+                    return (bool)response.Value;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+        }
+
+        public bool IsShuffle
+        {
+            get
+            {
+                try
+                {
+                    var response = this.Evaluate("app.player.shufflePlaylist");
+                    if (response.Exception != null)
+                    {
+                        return false;
+                    }
+
+                    return (bool)response.Value;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+        }
+
+        public int TrackLength
+        {
+            get
+            {
+                try
+                {
+                    var response = this.Evaluate("app.player.trackLengthMS");
+                    if (response.Exception != null)
+                    {
+                        return 0;
+                    }
+
+                    return int.Parse(response.Value.ToString());
+                }
+                catch (Exception)
+                {
+                    return 0;
+                }
+            }
+        }
+
+        public int TrackPosition
+        {
+            get
+            {
+                try
+                {
+                    var response = this.Evaluate("app.player.trackPositionMS");
+                    if (response.Exception != null)
+                    {
+                        return 0;
+                    }
+
+                    return int.Parse(response.Value.ToString());
+                }
+                catch (Exception)
+                {
+                    return 0;
+                }
+            }
+        }
+
+        public double Volume
+        {
+            get
+            {
+                try
+                {
+                    var response = this.Evaluate("app.player.volume");
+                    if (response.Exception != null)
+                    {
+                        return 0;
+                    }
+
+                    return (double)response.Value;
+                }
+                catch (Exception)
+                {
+                    return 0;
+                }
+            }
+        }
+
         public MediaMonkeyNet() : this(DefaultRemoteDebuggingUri, true) { }
 
         public MediaMonkeyNet(string remoteDebuggingUri) : this(remoteDebuggingUri, true) { }
@@ -71,13 +239,7 @@ namespace MediaMonkeyNet
             return Deserialise<TRes>(s);
         }
 
-        public List<RemoteSessionsResponse> GetAvailableSessions()
-        {
-            var res = this.SendRequest<List<RemoteSessionsResponse>>();
-            return (from r in res
-                    where r.devtoolsFrontendUrl != null
-                    select r).ToList();
-        }
+
 
         private T Deserialise<T>(string json)
         {
@@ -98,8 +260,25 @@ namespace MediaMonkeyNet
             return obj;
         }
 
+
+
+        public List<RemoteSessionsResponse> GetAvailableSessions()
+        {
+            /// <summary>
+            /// Get a list of all available remote sessions for the current instance
+            /// </summary>
+
+            var res = this.SendRequest<List<RemoteSessionsResponse>>();
+            return (from r in res
+                    where r.devtoolsFrontendUrl != null
+                    select r).ToList();
+        }
+
         public void SetActiveSession(string sessionWSEndpoint)
         {
+            /// <summary>
+            /// Set the active remote session for the current instance
+            /// </summary>
             // Sometimes binding to localhost might resolve wrong AddressFamily, force IPv4
             this.SessionWSEndpoint = sessionWSEndpoint.Replace("ws://localhost", "ws://127.0.0.1");
             var chromeSessionFactory = new ChromeSessionFactory();
@@ -125,7 +304,9 @@ namespace MediaMonkeyNet
 
         public EvaluateResponse Evaluate(string command)
         {
-            // Generic method to send a command to mediamonkey
+            /// <summary>
+            /// Generic method to send a command to mediamonkey
+            /// </summary>
 
             if (!this.HasActiveSession())
             {
@@ -153,9 +334,21 @@ namespace MediaMonkeyNet
 
         }
 
+        public EvaluateResponse GetPlayingStatus()
+        {
+            /// <summary>
+            /// Starts Playback
+            /// </summary>
+            return this.Evaluate("app.player.playAsync()");
+        }
+
         public Track GetCurrentTrack()
         {
-            // Returns a track object for the current track
+
+            /// <summary>
+            /// Returns a track object for the current track
+            /// </summary>
+
             EvaluateResponse currentTrack = this.Evaluate("app.player.getCurrentTrack()");
 
             if(currentTrack.Exception != null || currentTrack.Value == null)
@@ -171,13 +364,36 @@ namespace MediaMonkeyNet
 
         }
 
-        public EvaluateResponse Play()
+        public EvaluateResponse NextTrack()
         {
             /// <summary>
-            /// Starts Playback
+            /// Plays the next file in the current playlist
             /// </summary>
-            var result = this.Evaluate("app.player.playAsync()");
-            return result;
+            return this.Evaluate("app.player.nextAsync()");
+        }
+
+        public EvaluateResponse PausePlayback()
+        {
+            /// <summary>
+            /// Pauses Playback
+            /// </summary>
+            return this.Evaluate("app.player.pauseAsync()");
+        }
+
+        public EvaluateResponse PreviousTrack()
+        {
+            /// <summary>
+            /// Plays the previous file in the current playlist
+            /// </summary>
+            return this.Evaluate("app.player.prevAsync()");
+        }
+
+        public EvaluateResponse SetMute(bool enabled)
+        {
+            /// <summary>
+            /// Sets mute status
+            /// </summary>
+            return this.Evaluate("app.player.mute = " + enabled.ToString().ToLower());
         }
 
         public EvaluateResponse SetRating(int rating) {
@@ -217,5 +433,69 @@ namespace MediaMonkeyNet
             var result = this.Evaluate(evalString);
             return result;
         }
+
+        public EvaluateResponse SetRepeat(bool enabled)
+        {
+            /// <summary>
+            /// Sets repeat status
+            /// </summary>
+            return this.Evaluate("app.player.repeatPlaylist = " + enabled.ToString().ToLower());
+        }
+
+        public EvaluateResponse SetShuffle(bool enabled)
+        {
+            /// <summary>
+            /// Sets shuffle status
+            /// </summary>
+            return this.Evaluate("app.player.shufflePlaylist = " + enabled.ToString().ToLower());
+        }
+
+        public EvaluateResponse SetTrackPosition(int position)
+        {
+            /// <summary>
+            /// Seek to the provided track time, in ms
+            /// </summary>
+
+            return this.Evaluate("app.player.seekMSAsync(" + position + ")");
+        }
+
+        public EvaluateResponse SetVolume(double volume)
+        {
+            /// <summary>
+            /// Sets the current value between 0 and 1.
+            /// </summary>
+
+            // Values outside 0 and 1 are automatically converted to 0/1 by mediamonkey
+            var nfi = new System.Globalization.NumberFormatInfo() {
+                NumberDecimalSeparator = "."
+            };
+
+            return this.Evaluate("app.player.volume = " + volume.ToString(nfi));
+        }
+
+        public EvaluateResponse StartPlayback()
+        {
+            /// <summary>
+            /// Starts Playback
+            /// </summary>
+            return this.Evaluate("app.player.playAsync()");
+        }
+
+        public EvaluateResponse StopPlayback()
+        {
+            /// <summary>
+            /// Stops playback
+            /// </summary>
+            return this.Evaluate("app.player.stopAsync()");
+        }
+
+        public EvaluateResponse TogglePlayback()
+        {
+            /// <summary>
+            /// Toggles play and pause status
+            /// </summary>
+            return this.Evaluate("app.player.playPauseAsync()");
+        }
+
     }
 }

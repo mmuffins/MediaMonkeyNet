@@ -71,16 +71,6 @@ namespace Sample
                 // be closed any time so we are issuing
                 // the commands in a try block
 
-                // var asyncString = await mediaMonkey.EvalAsync("app.db.getTracklist('SELECT * FROM Songs', -1)");
-                // MyAsync(mediaMonkey);
-
-                var response = mediaMonkey.Play();
-                if (response.Exception != null)
-                {
-                    Console.WriteLine("An error occurred while issuing the play command:");
-                    Console.WriteLine(response.Exception);
-                }
-
                 Track currentTrack = mediaMonkey.GetCurrentTrack();
                 if (currentTrack == null)
                 {
@@ -91,61 +81,27 @@ namespace Sample
                     Console.WriteLine("Current Track:");
                     Console.WriteLine("Title:" + currentTrack.Title);
                     Console.WriteLine("Artist:" + currentTrack.ArtistName);
+                    Console.WriteLine("Rating:" + currentTrack.Rating);
+
+                    Console.WriteLine(mediaMonkey.TogglePlayback());
+
+                    var response = mediaMonkey.SetRating(30);
+                    if (response.Exception != null)
+                    {
+                        // All command responses contain an exception property
+                        // which can be checked to verify if an action was successful
+                        Console.WriteLine("An error occurred while attempting to update the rating of the currently playing track:");
+                        Console.WriteLine(response.Exception);
+                    }
+
                 }
+
             }
             catch (Exception)
             {
                 Console.WriteLine("Unable to communicate with MediaMonkey");
                 return;
             }
-
-            var nowPlaying = mediaMonkey.GetCurrentTrack();
-            Console.WriteLine(nowPlaying.Title);
-
-            return;
-
-            int loopCount = 1;
-
-
-            System.Timers.Timer aTimer = new System.Timers.Timer();
-            aTimer.Interval = 200;
-
-            //aTimer.Enabled = true;
-
-            Console.WriteLine("Press \'q\' to quit the sample.");
-
-            //while (Console.Read() != 'q')
-
-
-            while (Console.Read() != 'q')
-            {
-                Console.WriteLine(loopCount);
-                loopCount++;
-                Console.ReadLine();
-                mediaMonkey.HasActiveSession();
-                var abc = mediaMonkey.GetCurrentTrack();
-
-                // abc.Title = "ee";
-                // abc.Artist = "ee";
-
-                // Console.WriteLine(mediaMonkey.GetCurrentTrack().Title);
-                // Console.WriteLine(mediaMonkey.GetCurrentTrack().Title);
-                // Console.WriteLine(mediaMonkey.GetCurrentTrack().Title);
-                // Console.WriteLine(mediaMonkey.GetCurrentTrack().Title);
-                // Console.WriteLine(mediaMonkey.GetCurrentTrack().Title);
-                Console.WriteLine("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-            }
-
-
-            // Track currentTrack = mediaMonkey.GetCurrentTrack();
-            // Console.WriteLine(currentTrack.Title);
-
-
-            // mediaMonkey.RunCommand("app.player.stopAsync()");
-            // var x2 = mediaMonkey.Evaluate("app.player.getCurrentTrack()");
-            // var x1 = mediaMonkey.Evaluate("app.player.getXXSXk()");
-            // var x3 = mediaMonkey.Evaluate("app.db.getTracklist('SELECT * FROM Songs', -1)");
-            // var x4 = mediaMonkey.Evaluate("app.db.getTracklist('SELECT * FROM SXXongs', -1)");
 
             Console.ReadLine();
         }
