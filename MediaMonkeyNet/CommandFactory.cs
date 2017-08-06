@@ -18,6 +18,7 @@ namespace MediaMonkeyNet
                 ReturnByValue = true,
                 AwaitPromise = AwaitPromise,
                 Expression = Expression,
+                Silent = false
             };
         }
     }
