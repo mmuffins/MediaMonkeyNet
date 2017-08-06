@@ -173,10 +173,49 @@ namespace MediaMonkeyNet
 
         public EvaluateResponse Play()
         {
-            // Starts Playback
+            /// <summary>
+            /// Starts Playback
+            /// </summary>
             var result = this.Evaluate("app.player.playAsync()");
             return result;
         }
 
+        public EvaluateResponse SetRating(int rating) {
+            /// <summary>
+            /// Sets Rating of the currently playing track
+            /// </summary>
+            /// <param name="rating">Rating of the track from 0 to 100</param>
+
+            var currentTrack = this.GetCurrentTrack();
+
+            return this.SetRating(rating, currentTrack.SongID);
+        }
+
+        public EvaluateResponse SetRating(int rating, Track track)
+        {
+            /// <summary>
+            /// Set Rating of the specified track
+            /// </summary>
+            /// <param name="rating">Rating of the track from 0 to 100</param>
+            /// <param name="track">Track object of the track</param>
+
+            return this.SetRating(rating, track.SongID);
+        }
+
+        public EvaluateResponse SetRating(int rating, int ID)
+        {
+            /// <summary>
+            /// Set Rating of the specified track
+            /// </summary>
+            /// <param name="rating">Rating of the track from 0 to 100</param>
+            /// <param name="rating">SongID property of the track</param>
+
+            string evalString = "app.getObject('track', { id:" + ID 
+                + "}).then(function(track){ if (track) {track.rating =" 
+                + rating + "; track.commitAsync();}});";
+
+            var result = this.Evaluate(evalString);
+            return result;
+        }
     }
 }
