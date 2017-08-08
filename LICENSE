@@ -19,3 +19,33 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
+--------
+
+Third party software and libraries used:
+
+ChromeDevTools https://github.com/MasterDevs/ChromeDevTools
+Copyright (c) 2015 MasterDevs, LLC
+License (MIT) https://github.com/MasterDevs/ChromeDevTools/blob/master/LICENSE
+
+
+WebSocket4Net https://github.com/kerryjiang/WebSocket4Net
+Kerry Jiang
+License (Apache License 2.0) https://github.com/kerryjiang/WebSocket4Net/blob/master/LICENSE.TXT
+
+
+Json.NET http://www.newtonsoft.com/json
+Copyright (c) 2007 James Newton-King
+License (MIT) https://github.com/JamesNK/Newtonsoft.Json/blob/master/LICENSE.md
+
+
+Fody https://github.com/Fody/Fody
+Copyright (c) Simon Cropp and contributors
+License (MIT) https://github.com/Fody/Fody/blob/master/License.txt
+
+
+Costura https://github.com/Fody/Costura
+Copyright (c) 2012 Simon Cropp and contributors
+https://github.com/Fody/Costura/blob/master/license.txt
+
