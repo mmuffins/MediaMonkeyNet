@@ -16,7 +16,7 @@ namespace Sample
             var mediaMonkey = new MediaMonkeyNet.MediaMonkeyNet("http://localhost:9222", false);
 
             // It's also possible to just use the default constructor without any parameters, which will
-            // init the remote session with http://localhost:9222 and the default session
+            // init the remote session with http://localhost:9222 and use the default session
             // Ideally, only one process should use the same socket, otherwise debugging wouldn't work
             // anyway. Nevertheless, if there is an issue with socket binding run the following command
             // to identify the process that's blocking the port try

@@ -201,29 +201,10 @@ namespace MediaMonkeyNet
 
             if (useDefaultSession)
             {
-                List<RemoteSessionsResponse> sessions;
+                List<RemoteSessionsResponse> sessions = this.GetAvailableSessions();
 
-                try
-                {
-                    sessions = this.GetAvailableSessions();
-                    if (sessions.Count == 0)
-                    {
-                        // Console.WriteLine("No debugging sessions are available");
-                        // Console.ReadLine();
-                        return;
-                    }
-
-                    // Will use the first available session
-                    var endpointUrl = sessions.FirstOrDefault().webSocketDebuggerUrl;
-
-                    this.SetActiveSession(endpointUrl);
-                }
-                catch (Exception)
-                {
-                    // Console.WriteLine("Could not get available sessions");
-                    // Console.ReadLine();
-                    return;
-                }
+                // Use the first available session
+                this.SetActiveSession(sessions.FirstOrDefault().webSocketDebuggerUrl);
             }
         }
 
@@ -238,8 +219,6 @@ namespace MediaMonkeyNet
             resp.Dispose();
             return Deserialise<TRes>(s);
         }
-
-
 
         private T Deserialise<T>(string json)
         {
@@ -259,7 +238,6 @@ namespace MediaMonkeyNet
             obj = (T)serializer.ReadObject(json);
             return obj;
         }
-
 
 
         public List<RemoteSessionsResponse> GetAvailableSessions()
