@@ -14,7 +14,7 @@ using Newtonsoft.Json.Linq;
 
 namespace MediaMonkeyNet
 {
-    public class MediaMonkeyNet
+    public class MediaMonkeyNet : IDisposable
     {
         const string JsonPostfix = "/json";
         const string DefaultRemoteDebuggingUri = "http://localhost:9222";
@@ -22,6 +22,7 @@ namespace MediaMonkeyNet
         string RemoteDebuggingUri;
         string SessionWSEndpoint;
         private ChromeSession ws;
+        bool disposed = false;
 
         public bool IsMuted
         {
@@ -204,7 +205,15 @@ namespace MediaMonkeyNet
                 List<RemoteSessionsResponse> sessions = this.GetAvailableSessions();
 
                 // Use the first available session
-                this.SetActiveSession(sessions.FirstOrDefault().webSocketDebuggerUrl);
+                if (sessions.Count > 0)
+                {
+                    string url = sessions.FirstOrDefault().webSocketDebuggerUrl;
+
+                    if (!String.IsNullOrWhiteSpace(url))
+                    {
+                        this.SetActiveSession(url);
+                    }
+                }
             }
         }
 
@@ -239,6 +248,35 @@ namespace MediaMonkeyNet
             return obj;
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+            }
+
+            if (ws != null)
+            {
+                ws.Dispose();
+            }
+
+            disposed = true;
+        }
+
+        ~MediaMonkeyNet()
+        {
+            Dispose(false);
+        }
 
         public List<RemoteSessionsResponse> GetAvailableSessions()
         {
@@ -257,6 +295,7 @@ namespace MediaMonkeyNet
             /// <summary>
             /// Set the active remote session for the current instance
             /// </summary>
+
             // Sometimes binding to localhost might resolve wrong AddressFamily, force IPv4
             this.SessionWSEndpoint = sessionWSEndpoint.Replace("ws://localhost", "ws://127.0.0.1");
             var chromeSessionFactory = new ChromeSessionFactory();
@@ -274,9 +313,11 @@ namespace MediaMonkeyNet
                 }
                 catch (NullReferenceException)
                 {
+                    Dispose();
                     return false;
                 }
             }
+
             return false;
         }
 
