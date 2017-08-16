@@ -66,6 +66,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cover.cs" />
     <Compile Include="EvaluateResponse.cs" />
     <Compile Include="Track.cs" />
     <Compile Include="MediaMonkeyNet.cs" />

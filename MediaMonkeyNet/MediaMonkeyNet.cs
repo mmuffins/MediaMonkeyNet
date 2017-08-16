@@ -463,6 +463,55 @@ namespace MediaMonkeyNet
             return this.Evaluate<object>("app.player.playAsync()");
         }
 
+        public List<Cover> GetCoverList()
+        {
+
+            /// <summary>
+            /// Returns a list of all covers for the current track
+            /// </summary>
+
+            // Make sure that the covers are loaded before requesting them by calling loadCoverListAsync()
+            var loadPromise = this.Evaluate<object>("var loadPromise = app.player.getCurrentTrack().loadCoverListAsync();loadPromise.whenLoaded();loadPromise;", false);
+
+            if (loadPromise.Exception != null || loadPromise.ObjectId == null)
+            {
+                return null;
+            }
+
+            string loadpromiseID = loadPromise.ObjectId;
+            var promiseObj = this.GetObject<object>(loadPromise.ObjectId);
+
+            // wait until isLoaded is true
+            for (int i = 0; i < 10; i++)
+            {
+                // this kind of loop is more hack than anything else,
+                // but until async functions are supported by mediamonkey
+                // this is the best option I have
+
+                var promiseLoaded = this.GetObject<object>(loadpromiseID);
+                if(!bool.Parse(promiseLoaded.Value.Where(x => x.Name == "isLoaded").FirstOrDefault().Value.ToString()))
+                {
+                    i = 20;
+                }
+            }
+
+            // Promise is resolved, load the actual covers
+            var remoteEvaluation = this.Evaluate<object>("var list=[];var covers = app.player.getCurrentTrack().loadCoverListAsync();covers.whenLoaded();covers.forEach(function(itm){list.push(itm)});list;", false);
+            var remoteIDs = this.GetObject<object>(remoteEvaluation.ObjectId);
+            var idList = remoteIDs.Value.Where(x => x.Description == "Object");
+
+            var coverList = new List<Cover>();
+
+            foreach (var item in idList)
+            {
+                var cover = new Cover(this.GetObject<object>(item.ObjectId));
+                coverList.Add(cover);
+            }
+
+
+            return coverList;
+        }
+
         public Track GetCurrentTrack()
         {
 
