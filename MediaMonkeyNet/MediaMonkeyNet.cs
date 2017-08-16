@@ -177,13 +177,13 @@ namespace MediaMonkeyNet
             {
                 try
                 {
-                    var response = this.Evaluate<double>("app.player.volume");
+                    var response = this.Evaluate<object>("app.player.volume");
                     if (response.Exception != null)
                     {
                         return 0;
                     }
 
-                    return response.Value;
+                    return double.Parse(response.Value.ToString());
                 }
                 catch (Exception)
                 {
@@ -321,7 +321,7 @@ namespace MediaMonkeyNet
             return false;
         }
 
-        public EvaluateResponse<T> Evaluate<T>(string command)
+        public EvaluateResponse<T> Evaluate<T>(string command, bool returnByValue = true)
         {
             /// <summary>
             /// Generic method to send a command to mediamonkey
@@ -335,7 +335,15 @@ namespace MediaMonkeyNet
 
             try
             {
-                EvaluateCommand cmd = CommandFactory.Create(command);
+                var cmd = new EvaluateCommand
+                {
+                    ObjectGroup = "console",
+                    IncludeCommandLineAPI = true,
+                    AwaitPromise = true,
+                    Silent = false,
+                    ReturnByValue = returnByValue,
+                    Expression = command
+                };
 
                 // var result = ws.SendAsync(cmd).Result;
                 // var cmdResponse = vs as CommandResponse<EvaluateCommandResponse>;
@@ -353,11 +361,11 @@ namespace MediaMonkeyNet
 
         }
 
-        public EvaluateResponse<object> EvaluateAsync(string command)
+        private object EvaluateAsync()
         {
-            /// <summary>
-            /// testing async functions
-            /// </summary>
+            // needs support for async/await which was
+            // introduced in chromium 55
+            // mm currently is based on chromium 53
 
             if (!this.HasActiveSession())
             {
@@ -381,20 +389,7 @@ namespace MediaMonkeyNet
                 // works perfectly, but can cause performance issues
                 //cmd.Expression = "function AllSongs(){var list = app.db.getTracklist('SELECT * FROM Songs', -1);while(list.isLoaded =! true){ /* wait until resolved */ }return list;};ReturnPromise();";
                 cmd.Expression = "new Promise(function(resolve) { resolve('done') })";
-
-                cmd.Expression = "function AllSongs(){var promise = new Promise(function(resolve){var list = app.db.getTracklist('SELECT * FROM Songs', -1);list.whenLoaded().then(function(){resolve(list);});});return promise;};ReturnPromise();";
-                cmd.Expression = "function AllSongs(){var list = app.db.getTracklist('SELECT * FROM Songs', -1);list.whenLoaded();return list;};ReturnPromise();";
-
-                var xx = new EvaluateResponse<string>((ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result);
-
                 var cmdResponse = (ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result.Result;
-
-                var getPropcmd = new GetPropertiesCommand();
-                getPropcmd.ObjectId = cmdResponse.ObjectId;
-                getPropcmd.OwnProperties = true;
-
-
-                var getPropResult = (ws.SendAsync(getPropcmd).Result as CommandResponse<GetPropertiesCommandResponse>).Result.Result;
 
                 // We don't return the value of the promise since
                 // we can't know when it will be finished
@@ -404,23 +399,12 @@ namespace MediaMonkeyNet
 
                 var awaitcmd = new AwaitPromiseCommand
                 {
-                    ReturnByValue = true
+                    ReturnByValue = true,
+                    PromiseObjectId = cmdResponse.ObjectId
                 };
 
-                awaitcmd.PromiseObjectId = cmdResponse.ObjectId;
-
-
-
-                //var response2 = (ws.SendAsync(awaitcmd).Result as CommandResponse<AwaitPromiseCommandResponse>).Result.Result;
                 var awaitPromiseResponse = ws.SendAsync(awaitcmd).Result;
-
-                //var result = cmdResponse.Result;
-                //var cmdResponseResult = cmdResponse.Result;
-                //var evalResponse = new EvaluateResponse(res);
-                //var parsedObject = xx.Value as JObject;
-
-
-                return new EvaluateResponse<object>((ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result);
+                return awaitPromiseResponse;
             }
             catch (NullReferenceException)
             {
@@ -431,10 +415,10 @@ namespace MediaMonkeyNet
 
         }
 
-        public EvaluateResponse<object> GetObject(string remoteObjectId)
+        public EvaluateResponse<IEnumerable<EvaluateObjectProperty<T>>> GetObject<T>(string remoteObjectId)
         {
             /// <summary>
-            /// testing async functions
+            /// Get properties of the provided remote object
             /// </summary>
 
             if (!this.HasActiveSession())
@@ -447,58 +431,20 @@ namespace MediaMonkeyNet
             {
 
                 // Run the initial command
-                var cmd = new EvaluateCommand
+                var cmd = new GetPropertiesCommand
                 {
-                    ObjectGroup = "console",
-                    IncludeCommandLineAPI = true,
-                    ReturnByValue = true,
-                    AwaitPromise = true,
-                    Silent = false
+                    ObjectId = remoteObjectId,
+                    OwnProperties = true,
+                    AccessorPropertiesOnly = false
                 };
 
-                string evalString;
-                // works perfectly, but can cause performance issues
-                //evalString = "function AllSongs(){var list = app.db.getTracklist('SELECT * FROM Songs', -1);while(list.isLoaded =! true){ /* wait until resolved */ }return list;};ReturnPromise();";
-                evalString = "new Promise(function(resolve) { resolve('done') })";
+                //var getPropResult = ;
+                // var xx = new EvaluateResponse<IEnumerable<EvaluateObjectProperty>>(getPropResult);
+                // var ab = xx.Value.Where(x => x.Name == "isLoaded");
 
-                evalString = "function AllSongs(){var promise = new Promise(function(resolve){var list = app.db.getTracklist('SELECT * FROM Songs', -1);list.whenLoaded().then(function(){resolve(list);});});return promise;};ReturnPromise();";
-                evalString = "function AllSongs(){var list = app.db.getTracklist('SELECT * FROM Songs', -1);list.whenLoaded();return list;};ReturnPromise();";
+                // return new EvaluateResponse<object>((ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result);
 
-
-                var cmdResponse = (ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result.Result;
-
-                var getPropcmd = new GetPropertiesCommand();
-                getPropcmd.ObjectId = cmdResponse.ObjectId;
-                getPropcmd.OwnProperties = true;
-
-
-                var getPropResult = (ws.SendAsync(getPropcmd).Result as CommandResponse<GetPropertiesCommandResponse>).Result.Result;
-
-                // We don't return the value of the promise since
-                // we can't know when it will be finished
-                // instead, get a reference to the object
-                // and send a new AwaitPromiseCommand
-                // which tells chrome to await the result of the object
-
-                var awaitcmd = new AwaitPromiseCommand
-                {
-                    ReturnByValue = true
-                };
-
-                awaitcmd.PromiseObjectId = cmdResponse.ObjectId;
-
-
-
-                //var response2 = (ws.SendAsync(awaitcmd).Result as CommandResponse<AwaitPromiseCommandResponse>).Result.Result;
-                var awaitPromiseResponse = ws.SendAsync(awaitcmd).Result;
-
-                //var result = cmdResponse.Result;
-                //var cmdResponseResult = cmdResponse.Result;
-                //var evalResponse = new EvaluateResponse(res);
-                //var parsedObject = xx.Value as JObject;
-
-
-                return new EvaluateResponse<object>((ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result);
+                return new EvaluateResponse<IEnumerable<EvaluateObjectProperty<T>>>((ws.SendAsync(cmd).Result as CommandResponse<GetPropertiesCommandResponse>).Result);
             }
             catch (NullReferenceException)
             {

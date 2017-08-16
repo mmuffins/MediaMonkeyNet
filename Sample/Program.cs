@@ -62,8 +62,6 @@ namespace Sample
                     return;
                 }
 
-                // mediaMonkey.EvaluateAsync("asdf");
-
                 // The connection to MM should be established now, 
                 // so we can start issuing commands
 
@@ -75,6 +73,8 @@ namespace Sample
 
                     Console.WriteLine("Player volume: " + mediaMonkey.Volume);
                     Console.WriteLine("Shuffle is active: " + mediaMonkey.IsShuffle);
+                    Console.WriteLine("Player volume: " + mediaMonkey.TrackPosition);
+
 
                     Track currentTrack = mediaMonkey.GetCurrentTrack();
                     if (currentTrack == null)
@@ -89,7 +89,7 @@ namespace Sample
                         Console.WriteLine("Rating:" + currentTrack.Rating);
 
                         // Start playback if a song was selected
-                        mediaMonkey.TogglePlayback();
+                        mediaMonkey.StartPlayback();
 
                         var response = mediaMonkey.SetRating(80);
                         if (response.Exception != null)
@@ -98,6 +98,40 @@ namespace Sample
                             // which can be checked to verify if an action was successful
                             Console.WriteLine("An error occurred while attempting to update the rating of the currently playing track:");
                             Console.WriteLine(response.Exception);
+                        }
+                    }
+
+
+                    // Generic javascript code can be executed by using the evaluate method
+                    var isRepeat = mediaMonkey.Evaluate<bool>("app.player.repeatPlaylist");
+                    if (isRepeat.Exception != null)
+                    {
+                        Console.WriteLine("Repeat is active: " + isRepeat);
+                    }
+
+                    // The example above only works if mediamonkey runs the function
+                    // synchronously. If it runs async, we need to handle the returned promise
+
+                    // Get ID of the remote object
+                    var allSongs = mediaMonkey.Evaluate<object>("function AllSongs(){var list = app.db.getTracklist('SELECT * FROM Songs LIMIT 3', -1);list.whenLoaded();return list;};AllSongs();", false);
+
+                    if(allSongs.Exception != null)
+                    {
+                        Console.WriteLine("Error while executing query:");
+                        Console.WriteLine(allSongs.Exception);
+                    }
+                    else
+                    {
+                        // Get properties of the remote object
+                        var remoteObj = mediaMonkey.GetObject<object>(allSongs.ObjectId);
+
+                        // GetObject returns an IEnumerable containing all properties of the remote object
+                        bool isLoaded = bool.Parse(remoteObj.Value.Where(x => x.Name == "isLoaded").FirstOrDefault().Value.ToString());
+
+                        if (isLoaded)
+                        {
+                            string tracks = remoteObj.Value.Where(x => x.Name == "asJSON").FirstOrDefault().Value.ToString();
+                            Console.WriteLine("Songlist: " + tracks);
                         }
                     }
                 }

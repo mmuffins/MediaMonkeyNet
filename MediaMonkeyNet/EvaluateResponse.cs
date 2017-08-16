@@ -34,5 +34,33 @@ namespace MediaMonkeyNet
             this.Description = response.Result.Description;
             this.ObjectId = response.Result.ObjectId;
         }
+
+        public EvaluateResponse(GetPropertiesCommandResponse response)
+        {
+            if (response.ExceptionDetails != null)
+            {
+                this.Exception = response.ExceptionDetails.Text;
+            }
+
+            this.Value = (T)response.Result.Select(x => new EvaluateObjectProperty<object>(x));
+        }
+    }
+
+    public class EvaluateObjectProperty <T>
+    {
+        public T Value { get; private set; }
+        public string Name { get; private set; }
+        public string Description { get; private set; }
+        public string ObjectId { get; private set; }
+        public string Type { get; private set; }
+
+        public EvaluateObjectProperty(PropertyDescriptor obj)
+        {
+            this.Name = obj.Name;
+            this.Value = (T)obj.Value.Value;
+            this.Type = obj.Value.Type;
+            this.ObjectId = obj.Value.ObjectId;
+            this.Description = obj.Value.Description;
+        }
     }
 }
