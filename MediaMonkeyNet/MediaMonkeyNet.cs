@@ -353,6 +353,163 @@ namespace MediaMonkeyNet
 
         }
 
+        public EvaluateResponse EvaluateAsync(string command)
+        {
+            /// <summary>
+            /// testing async functions
+            /// </summary>
+
+            if (!this.HasActiveSession())
+            {
+                // No active chrome session
+                throw new NullReferenceException("No active session found");
+            }
+
+            try
+            {
+
+                // Run the initial command
+                var cmd = new EvaluateCommand
+                {
+                    ObjectGroup = "console",
+                    IncludeCommandLineAPI = true,
+                    ReturnByValue = true,
+                    AwaitPromise = true,
+                    Silent = false
+                };
+
+                // works perfectly, but can cause performance issues
+                //cmd.Expression = "function AllSongs(){var list = app.db.getTracklist('SELECT * FROM Songs', -1);while(list.isLoaded =! true){ /* wait until resolved */ }return list;};ReturnPromise();";
+                cmd.Expression = "new Promise(function(resolve) { resolve('done') })";
+
+                cmd.Expression = "function AllSongs(){var promise = new Promise(function(resolve){var list = app.db.getTracklist('SELECT * FROM Songs', -1);list.whenLoaded().then(function(){resolve(list);});});return promise;};ReturnPromise();";
+                cmd.Expression = "function AllSongs(){var list = app.db.getTracklist('SELECT * FROM Songs', -1);list.whenLoaded();return list;};ReturnPromise();";
+
+                var xx = new EvaluateResponse((ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result);
+
+                var cmdResponse = (ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result.Result;
+
+                var getPropcmd = new GetPropertiesCommand();
+                getPropcmd.ObjectId = cmdResponse.ObjectId;
+                getPropcmd.OwnProperties = true;
+
+
+                var getPropResult = (ws.SendAsync(getPropcmd).Result as CommandResponse<GetPropertiesCommandResponse>).Result.Result;
+
+                // We don't return the value of the promise since
+                // we can't know when it will be finished
+                // instead, get a reference to the object
+                // and send a new AwaitPromiseCommand
+                // which tells chrome to await the result of the object
+
+                var awaitcmd = new AwaitPromiseCommand
+                {
+                    ReturnByValue = true
+                };
+
+                awaitcmd.PromiseObjectId = cmdResponse.ObjectId;
+
+
+
+                //var response2 = (ws.SendAsync(awaitcmd).Result as CommandResponse<AwaitPromiseCommandResponse>).Result.Result;
+                var awaitPromiseResponse = ws.SendAsync(awaitcmd).Result;
+
+                //var result = cmdResponse.Result;
+                //var cmdResponseResult = cmdResponse.Result;
+                //var evalResponse = new EvaluateResponse(res);
+                //var parsedObject = xx.Value as JObject;
+
+
+                return new EvaluateResponse((ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result);
+            }
+            catch (NullReferenceException)
+            {
+                //Session is not available anymore, update the local session accordingly
+                this.ws = null;
+                throw;
+            }
+
+        }
+
+        public EvaluateResponse GetObject(string remoteObjectId)
+        {
+            /// <summary>
+            /// testing async functions
+            /// </summary>
+
+            if (!this.HasActiveSession())
+            {
+                // No active chrome session
+                throw new NullReferenceException("No active session found");
+            }
+
+            try
+            {
+
+                // Run the initial command
+                var cmd = new EvaluateCommand
+                {
+                    ObjectGroup = "console",
+                    IncludeCommandLineAPI = true,
+                    ReturnByValue = true,
+                    AwaitPromise = true,
+                    Silent = false
+                };
+
+                string evalString;
+                // works perfectly, but can cause performance issues
+                //evalString = "function AllSongs(){var list = app.db.getTracklist('SELECT * FROM Songs', -1);while(list.isLoaded =! true){ /* wait until resolved */ }return list;};ReturnPromise();";
+                evalString = "new Promise(function(resolve) { resolve('done') })";
+
+                evalString = "function AllSongs(){var promise = new Promise(function(resolve){var list = app.db.getTracklist('SELECT * FROM Songs', -1);list.whenLoaded().then(function(){resolve(list);});});return promise;};ReturnPromise();";
+                evalString = "function AllSongs(){var list = app.db.getTracklist('SELECT * FROM Songs', -1);list.whenLoaded();return list;};ReturnPromise();";
+
+
+                var cmdResponse = (ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result.Result;
+
+                var getPropcmd = new GetPropertiesCommand();
+                getPropcmd.ObjectId = cmdResponse.ObjectId;
+                getPropcmd.OwnProperties = true;
+
+
+                var getPropResult = (ws.SendAsync(getPropcmd).Result as CommandResponse<GetPropertiesCommandResponse>).Result.Result;
+
+                // We don't return the value of the promise since
+                // we can't know when it will be finished
+                // instead, get a reference to the object
+                // and send a new AwaitPromiseCommand
+                // which tells chrome to await the result of the object
+
+                var awaitcmd = new AwaitPromiseCommand
+                {
+                    ReturnByValue = true
+                };
+
+                awaitcmd.PromiseObjectId = cmdResponse.ObjectId;
+
+
+
+                //var response2 = (ws.SendAsync(awaitcmd).Result as CommandResponse<AwaitPromiseCommandResponse>).Result.Result;
+                var awaitPromiseResponse = ws.SendAsync(awaitcmd).Result;
+
+                //var result = cmdResponse.Result;
+                //var cmdResponseResult = cmdResponse.Result;
+                //var evalResponse = new EvaluateResponse(res);
+                //var parsedObject = xx.Value as JObject;
+
+
+                return new EvaluateResponse((ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result);
+            }
+            catch (NullReferenceException)
+            {
+                //Session is not available anymore, update the local session accordingly
+                this.ws = null;
+                throw;
+            }
+
+        }
+
+
         public EvaluateResponse GetPlayingStatus()
         {
             /// <summary>
@@ -370,7 +527,7 @@ namespace MediaMonkeyNet
 
             EvaluateResponse currentTrack = this.Evaluate("app.player.getCurrentTrack()");
 
-            if(currentTrack.Exception != null || currentTrack.Value == null)
+            if (currentTrack.Exception != null || currentTrack.Value == null)
             {
                 return null;
             }
@@ -380,7 +537,6 @@ namespace MediaMonkeyNet
                 var result = currentTrack.Value as JObject;
                 return new Track(result);
             }
-
         }
 
         public EvaluateResponse NextTrack()
