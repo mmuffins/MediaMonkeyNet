@@ -463,7 +463,7 @@ namespace MediaMonkeyNet
             return this.Evaluate<object>("app.player.playAsync()");
         }
 
-        public List<Cover> GetCoverList()
+        public List<Cover> GetCoverList(bool forceWait = false)
         {
 
             /// <summary>
@@ -471,7 +471,7 @@ namespace MediaMonkeyNet
             /// </summary>
 
             // Make sure that the covers are loaded before requesting them by calling loadCoverListAsync()
-            var loadPromise = this.Evaluate<object>("var loadPromise = app.player.getCurrentTrack().loadCoverListAsync();loadPromise.whenLoaded();loadPromise;", false);
+            var loadPromise = this.Evaluate<object>("var loadPromise = app.player.getCurrentTrack().getCoverList();loadPromise.whenLoaded();loadPromise;", false);
 
             if (loadPromise.Exception != null || loadPromise.ObjectId == null)
             {
@@ -482,21 +482,24 @@ namespace MediaMonkeyNet
             var promiseObj = this.GetObject<object>(loadPromise.ObjectId);
 
             // wait until isLoaded is true
-            for (int i = 0; i < 10; i++)
+            if (forceWait)
             {
-                // this kind of loop is more hack than anything else,
-                // but until async functions are supported by mediamonkey
-                // this is the best option I have
-
-                var promiseLoaded = this.GetObject<object>(loadpromiseID);
-                if(!bool.Parse(promiseLoaded.Value.Where(x => x.Name == "isLoaded").FirstOrDefault().Value.ToString()))
+                for (int i = 0; i < 10; i++)
                 {
-                    i = 20;
+                    // this kind of loop is more hack than anything else,
+                    // but until async functions are supported by mediamonkey
+                    // this is the best option I have
+
+                    var promiseLoaded = this.GetObject<object>(loadpromiseID);
+                    if (!bool.Parse(promiseLoaded.Value.Where(x => x.Name == "isLoaded").FirstOrDefault().Value.ToString()))
+                    {
+                        i = 20;
+                    }
                 }
             }
 
             // Promise is resolved, load the actual covers
-            var remoteEvaluation = this.Evaluate<object>("var list=[];var covers = app.player.getCurrentTrack().loadCoverListAsync();covers.whenLoaded();covers.forEach(function(itm){list.push(itm)});list;", false);
+            var remoteEvaluation = this.Evaluate<object>("var list=[];var covers = app.player.getCurrentTrack().getCoverList();covers.whenLoaded();covers.forEach(function(itm){list.push(itm)});list;", false);
             var remoteIDs = this.GetObject<object>(remoteEvaluation.ObjectId);
             var idList = remoteIDs.Value.Where(x => x.Description == "Object");
 
