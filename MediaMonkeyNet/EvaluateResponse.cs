@@ -8,15 +8,15 @@ using MasterDevs.ChromeDevTools.Protocol.Chrome.Runtime;
 
 namespace MediaMonkeyNet
 {
-    public class EvaluateResponse
+    public class EvaluateResponse <T>
     {
-        public object Value { get; private set; }
+        public T Value { get; private set; }
         public string Exception { get; private set; }
         public string Description { get; private set; }
         public string ObjectId { get; private set; }
         public string Type { get; private set; }
 
-        public EvaluateResponse(object value, string exception)
+        public EvaluateResponse(T value, string exception)
         {
             this.Value = value;
             this.Exception = exception;
@@ -29,11 +29,10 @@ namespace MediaMonkeyNet
                 this.Exception = response.ExceptionDetails.Text;
             }
 
-            this.Value = response.Result.Value;
+            this.Value = (T)response.Result.Value;
             this.Type = response.Result.Type;
             this.Description = response.Result.Description;
             this.ObjectId = response.Result.ObjectId;
-
         }
     }
 }

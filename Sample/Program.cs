@@ -62,6 +62,8 @@ namespace Sample
                     return;
                 }
 
+                // mediaMonkey.EvaluateAsync("asdf");
+
                 // The connection to MM should be established now, 
                 // so we can start issuing commands
 
@@ -70,6 +72,9 @@ namespace Sample
                     // The application hosting our session could
                     // be closed any time so we are issuing
                     // the commands in a try block
+
+                    Console.WriteLine("Player volume: " + mediaMonkey.Volume);
+                    Console.WriteLine("Shuffle is active: " + mediaMonkey.IsShuffle);
 
                     Track currentTrack = mediaMonkey.GetCurrentTrack();
                     if (currentTrack == null)
@@ -83,19 +88,18 @@ namespace Sample
                         Console.WriteLine("Artist:" + currentTrack.ArtistName);
                         Console.WriteLine("Rating:" + currentTrack.Rating);
 
-                        Console.WriteLine(mediaMonkey.TogglePlayback());
+                        // Start playback if a song was selected
+                        mediaMonkey.TogglePlayback();
 
-                        var response = mediaMonkey.SetRating(30);
+                        var response = mediaMonkey.SetRating(80);
                         if (response.Exception != null)
                         {
-                            // All command responses contain an exception property
+                            // All commands return an object containing an exception property
                             // which can be checked to verify if an action was successful
                             Console.WriteLine("An error occurred while attempting to update the rating of the currently playing track:");
                             Console.WriteLine(response.Exception);
                         }
-
                     }
-
                 }
                 catch (Exception)
                 {

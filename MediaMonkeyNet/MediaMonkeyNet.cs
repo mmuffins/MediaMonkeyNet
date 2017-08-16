@@ -30,13 +30,13 @@ namespace MediaMonkeyNet
             {
                 try
                 {
-                    var response = this.Evaluate("app.player.mute");
+                    var response = this.Evaluate<bool>("app.player.mute");
                     if (response.Exception != null)
                     {
                         return false;
                     }
 
-                    return (bool)response.Value;
+                    return response.Value;
                 }
                 catch (Exception)
                 {
@@ -51,13 +51,13 @@ namespace MediaMonkeyNet
             {
                 try
                 {
-                    var response = this.Evaluate("app.player.paused");
+                    var response = this.Evaluate<bool>("app.player.paused");
                     if (response.Exception != null)
                     {
                         return false;
                     }
 
-                    return (bool)response.Value;
+                    return response.Value;
                 }
                 catch (Exception)
                 {
@@ -72,13 +72,13 @@ namespace MediaMonkeyNet
             {
                 try
                 {
-                    var response = this.Evaluate("app.player.isPlaying");
+                    var response = this.Evaluate<bool>("app.player.isPlaying");
                     if (response.Exception != null)
                     {
                         return false;
                     }
 
-                    return (bool)response.Value;
+                    return response.Value;
                 }
                 catch (Exception)
                 {
@@ -93,13 +93,13 @@ namespace MediaMonkeyNet
             {
                 try
                 {
-                    var response = this.Evaluate("app.player.repeatPlaylist");
+                    var response = this.Evaluate<bool>("app.player.repeatPlaylist");
                     if (response.Exception != null)
                     {
                         return false;
                     }
 
-                    return (bool)response.Value;
+                    return response.Value;
                 }
                 catch (Exception)
                 {
@@ -114,13 +114,13 @@ namespace MediaMonkeyNet
             {
                 try
                 {
-                    var response = this.Evaluate("app.player.shufflePlaylist");
+                    var response = this.Evaluate<bool>("app.player.shufflePlaylist");
                     if (response.Exception != null)
                     {
                         return false;
                     }
 
-                    return (bool)response.Value;
+                    return response.Value;
                 }
                 catch (Exception)
                 {
@@ -129,19 +129,19 @@ namespace MediaMonkeyNet
             }
         }
 
-        public int TrackLength
+        public long TrackLength
         {
             get
             {
                 try
                 {
-                    var response = this.Evaluate("app.player.trackLengthMS");
+                    var response = this.Evaluate<long>("app.player.trackLengthMS");
                     if (response.Exception != null)
                     {
                         return 0;
                     }
 
-                    return int.Parse(response.Value.ToString());
+                    return response.Value;
                 }
                 catch (Exception)
                 {
@@ -150,19 +150,19 @@ namespace MediaMonkeyNet
             }
         }
 
-        public int TrackPosition
+        public long TrackPosition
         {
             get
             {
                 try
                 {
-                    var response = this.Evaluate("app.player.trackPositionMS");
+                    var response = this.Evaluate<long>("app.player.trackPositionMS");
                     if (response.Exception != null)
                     {
                         return 0;
                     }
 
-                    return int.Parse(response.Value.ToString());
+                    return response.Value;
                 }
                 catch (Exception)
                 {
@@ -177,13 +177,13 @@ namespace MediaMonkeyNet
             {
                 try
                 {
-                    var response = this.Evaluate("app.player.volume");
+                    var response = this.Evaluate<double>("app.player.volume");
                     if (response.Exception != null)
                     {
                         return 0;
                     }
 
-                    return (double)response.Value;
+                    return response.Value;
                 }
                 catch (Exception)
                 {
@@ -321,7 +321,7 @@ namespace MediaMonkeyNet
             return false;
         }
 
-        public EvaluateResponse Evaluate(string command)
+        public EvaluateResponse<T> Evaluate<T>(string command)
         {
             /// <summary>
             /// Generic method to send a command to mediamonkey
@@ -342,7 +342,7 @@ namespace MediaMonkeyNet
                 // var cmdResponseResult = ab.Result;
                 // var evalResponse = new EvaluateResponse(res);
                 // var parsedObject = xx.Value as JObject;
-                return new EvaluateResponse((ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result);
+                return new EvaluateResponse<T>((ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result);
             }
             catch (NullReferenceException)
             {
@@ -353,7 +353,7 @@ namespace MediaMonkeyNet
 
         }
 
-        public EvaluateResponse EvaluateAsync(string command)
+        public EvaluateResponse<object> EvaluateAsync(string command)
         {
             /// <summary>
             /// testing async functions
@@ -385,7 +385,7 @@ namespace MediaMonkeyNet
                 cmd.Expression = "function AllSongs(){var promise = new Promise(function(resolve){var list = app.db.getTracklist('SELECT * FROM Songs', -1);list.whenLoaded().then(function(){resolve(list);});});return promise;};ReturnPromise();";
                 cmd.Expression = "function AllSongs(){var list = app.db.getTracklist('SELECT * FROM Songs', -1);list.whenLoaded();return list;};ReturnPromise();";
 
-                var xx = new EvaluateResponse((ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result);
+                var xx = new EvaluateResponse<string>((ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result);
 
                 var cmdResponse = (ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result.Result;
 
@@ -420,7 +420,7 @@ namespace MediaMonkeyNet
                 //var parsedObject = xx.Value as JObject;
 
 
-                return new EvaluateResponse((ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result);
+                return new EvaluateResponse<object>((ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result);
             }
             catch (NullReferenceException)
             {
@@ -431,7 +431,7 @@ namespace MediaMonkeyNet
 
         }
 
-        public EvaluateResponse GetObject(string remoteObjectId)
+        public EvaluateResponse<object> GetObject(string remoteObjectId)
         {
             /// <summary>
             /// testing async functions
@@ -498,7 +498,7 @@ namespace MediaMonkeyNet
                 //var parsedObject = xx.Value as JObject;
 
 
-                return new EvaluateResponse((ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result);
+                return new EvaluateResponse<object>((ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result);
             }
             catch (NullReferenceException)
             {
@@ -509,13 +509,12 @@ namespace MediaMonkeyNet
 
         }
 
-
-        public EvaluateResponse GetPlayingStatus()
+        public EvaluateResponse<object> GetPlayingStatus()
         {
             /// <summary>
             /// Starts Playback
             /// </summary>
-            return this.Evaluate("app.player.playAsync()");
+            return this.Evaluate<object>("app.player.playAsync()");
         }
 
         public Track GetCurrentTrack()
@@ -525,7 +524,7 @@ namespace MediaMonkeyNet
             /// Returns a track object for the current track
             /// </summary>
 
-            EvaluateResponse currentTrack = this.Evaluate("app.player.getCurrentTrack()");
+            EvaluateResponse<JObject> currentTrack = this.Evaluate<JObject>("app.player.getCurrentTrack()");
 
             if (currentTrack.Exception != null || currentTrack.Value == null)
             {
@@ -534,44 +533,44 @@ namespace MediaMonkeyNet
             else
             {
                 // currentTrack.Value = new Track(currentTrack.Value as JObject);
-                var result = currentTrack.Value as JObject;
+                var result = currentTrack.Value;
                 return new Track(result);
             }
         }
 
-        public EvaluateResponse NextTrack()
+        public EvaluateResponse<object> NextTrack()
         {
             /// <summary>
             /// Plays the next file in the current playlist
             /// </summary>
-            return this.Evaluate("app.player.nextAsync()");
+            return this.Evaluate<object>("app.player.nextAsync()");
         }
 
-        public EvaluateResponse PausePlayback()
+        public EvaluateResponse<object> PausePlayback()
         {
             /// <summary>
             /// Pauses Playback
             /// </summary>
-            return this.Evaluate("app.player.pauseAsync()");
+            return this.Evaluate<object>("app.player.pauseAsync()");
         }
 
-        public EvaluateResponse PreviousTrack()
+        public EvaluateResponse<object> PreviousTrack()
         {
             /// <summary>
             /// Plays the previous file in the current playlist
             /// </summary>
-            return this.Evaluate("app.player.prevAsync()");
+            return this.Evaluate<object>("app.player.prevAsync()");
         }
 
-        public EvaluateResponse SetMute(bool enabled)
+        public EvaluateResponse<object> SetMute(bool enabled)
         {
             /// <summary>
             /// Sets mute status
             /// </summary>
-            return this.Evaluate("app.player.mute = " + enabled.ToString().ToLower());
+            return this.Evaluate<object>("app.player.mute = " + enabled.ToString().ToLower());
         }
 
-        public EvaluateResponse SetRating(int rating) {
+        public EvaluateResponse<object> SetRating(int rating) {
             /// <summary>
             /// Sets Rating of the currently playing track
             /// </summary>
@@ -582,7 +581,7 @@ namespace MediaMonkeyNet
             return this.SetRating(rating, currentTrack.SongID);
         }
 
-        public EvaluateResponse SetRating(int rating, Track track)
+        public EvaluateResponse<object> SetRating(int rating, Track track)
         {
             /// <summary>
             /// Set Rating of the specified track
@@ -593,7 +592,7 @@ namespace MediaMonkeyNet
             return this.SetRating(rating, track.SongID);
         }
 
-        public EvaluateResponse SetRating(int rating, int ID)
+        public EvaluateResponse<object> SetRating(int rating, int ID)
         {
             /// <summary>
             /// Set Rating of the specified track
@@ -605,36 +604,35 @@ namespace MediaMonkeyNet
                 + "}).then(function(track){ if (track) {track.rating =" 
                 + rating + "; track.commitAsync();}});";
 
-            var result = this.Evaluate(evalString);
-            return result;
+            return this.Evaluate<object>(evalString); ;
         }
 
-        public EvaluateResponse SetRepeat(bool enabled)
+        public EvaluateResponse<object> SetRepeat(bool enabled)
         {
             /// <summary>
             /// Sets repeat status
             /// </summary>
-            return this.Evaluate("app.player.repeatPlaylist = " + enabled.ToString().ToLower());
+            return this.Evaluate<object>("app.player.repeatPlaylist = " + enabled.ToString().ToLower());
         }
 
-        public EvaluateResponse SetShuffle(bool enabled)
+        public EvaluateResponse<object> SetShuffle(bool enabled)
         {
             /// <summary>
             /// Sets shuffle status
             /// </summary>
-            return this.Evaluate("app.player.shufflePlaylist = " + enabled.ToString().ToLower());
+            return this.Evaluate<object>("app.player.shufflePlaylist = " + enabled.ToString().ToLower());
         }
 
-        public EvaluateResponse SetTrackPosition(int position)
+        public EvaluateResponse<object> SetTrackPosition(int position)
         {
             /// <summary>
             /// Seek to the provided track time, in ms
             /// </summary>
 
-            return this.Evaluate("app.player.seekMSAsync(" + position + ")");
+            return this.Evaluate<object>("app.player.seekMSAsync(" + position + ")");
         }
 
-        public EvaluateResponse SetVolume(double volume)
+        public EvaluateResponse<object> SetVolume(double volume)
         {
             /// <summary>
             /// Sets the current value between 0 and 1.
@@ -645,31 +643,31 @@ namespace MediaMonkeyNet
                 NumberDecimalSeparator = "."
             };
 
-            return this.Evaluate("app.player.volume = " + volume.ToString(nfi));
+            return this.Evaluate<object>("app.player.volume = " + volume.ToString(nfi));
         }
 
-        public EvaluateResponse StartPlayback()
+        public EvaluateResponse<object> StartPlayback()
         {
             /// <summary>
             /// Starts Playback
             /// </summary>
-            return this.Evaluate("app.player.playAsync()");
+            return this.Evaluate<object>("app.player.playAsync()");
         }
 
-        public EvaluateResponse StopPlayback()
+        public EvaluateResponse<object> StopPlayback()
         {
             /// <summary>
             /// Stops playback
             /// </summary>
-            return this.Evaluate("app.player.stopAsync()");
+            return this.Evaluate<object>("app.player.stopAsync()");
         }
 
-        public EvaluateResponse TogglePlayback()
+        public EvaluateResponse<object> TogglePlayback()
         {
             /// <summary>
             /// Toggles play and pause status
             /// </summary>
-            return this.Evaluate("app.player.playPauseAsync()");
+            return this.Evaluate<object>("app.player.playPauseAsync()");
         }
 
     }
