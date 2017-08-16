@@ -68,7 +68,6 @@
   <ItemGroup>
     <Compile Include="EvaluateResponse.cs" />
     <Compile Include="Track.cs" />
-    <Compile Include="CommandFactory.cs" />
     <Compile Include="MediaMonkeyNet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Requests\IChromeRequest.cs" />
