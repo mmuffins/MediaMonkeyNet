@@ -12,172 +12,6 @@ namespace MediaMonkeyNet
 {
     public class Track
     {
-        public Track(JObject Jobject)
-        {
-            Actors = (string)Jobject.GetValue("actors");
-
-            AlbumArtistName = (string)Jobject.GetValue("albumArtist");
-
-            AlbumID = (int)Jobject.GetValue("idalbum");
-
-            AlbumName = (string)Jobject.GetValue("album");
-
-            ArtistName = (string)Jobject.GetValue("artist");
-
-            Author = (string)Jobject.GetValue("author");
-
-            Bitrate = (int)Jobject.GetValue("bitrate");
-
-            BPM = (int)Jobject.GetValue("bpm");
-
-            Conductor = (string)Jobject.GetValue("conductor");
-
-            Copyright = (string)Jobject.GetValue("copyright");
-
-            Custom1 = (string)Jobject.GetValue("custom1");
-
-            Custom2 = (string)Jobject.GetValue("custom2");
-
-            Custom3 = (string)Jobject.GetValue("custom3");
-
-            Custom4 = (string)Jobject.GetValue("custom4");
-
-            Custom5 = (string)Jobject.GetValue("custom5");
-
-            Date = (string)Jobject.GetValue("date");
-
-
-            var dateAdded_UTC = Jobject.GetValue("dateAdded_UTC");
-            if (dateAdded_UTC.HasValues) {
-                DateTime.TryParse((string)dateAdded_UTC, out DateTime parsedDateAdded);
-                DateAdded = parsedDateAdded;
-            }
-
-            Day = (int)Jobject.GetValue("day");
-
-            Director = (string)Jobject.GetValue("director");
-
-            DiscNumber = (string)Jobject.GetValue("discNumber");
-
-            Encoder = (string)Jobject.GetValue("encoder");
-
-            EpisodeNumber = (string)Jobject.GetValue("episodeNumber");
-
-            FileLength = (double)Jobject.GetValue("fileLength");
-
-            var fileModified_UTC = Jobject.GetValue("fileModified_UTC");
-            if (fileModified_UTC.HasValues)
-            {
-                DateTime.TryParse((string)fileModified_UTC, out DateTime parsedFileModified);
-                FileModified = parsedFileModified;
-            }
-
-            FileName = (string)Jobject.GetValue("filename");
-
-            FileType = (string)Jobject.GetValue("fileType");
-
-            Frequency = (int)Jobject.GetValue("frequency");
-
-            Genre = (string)Jobject.GetValue("genre");
-
-            Grouping = (string)Jobject.GetValue("groupDesc");
-
-            ID = (int)Jobject.GetValue("id");
-
-            InvolvedPeople = (string)Jobject.GetValue("involvedPeople");
-
-            IsntInDB = (bool)Jobject.GetValue("isntInDB");
-
-            ISRC = (string)Jobject.GetValue("isrc");
-
-            Isvideo = (bool)Jobject.GetValue("isVideo");
-
-            var lastTimePlayed_UTC = Jobject.GetValue("lastTimePlayed_UTC");
-            if (lastTimePlayed_UTC.HasValues)
-            {
-                DateTime.TryParse((string)lastTimePlayed_UTC, out DateTime parsedLastPlayed);
-                LastPlayed = parsedLastPlayed;
-            }
-
-            Leveling = (double)Jobject.GetValue("volumeLeveling");
-
-            Lyricist = (string)Jobject.GetValue("lyricist");
-
-            MediaID = (int)Jobject.GetValue("idMedia");
-
-            MediaLabel = (string)Jobject.GetValue("mediaLabel");
-
-            Month = (int)Jobject.GetValue("month");
-
-            Mood = (string)Jobject.GetValue("mood");
-
-            MusicComposer = (string)Jobject.GetValue("composer");
-
-            Occasion = (string)Jobject.GetValue("occasion");
-
-            OriginalArtist = (string)Jobject.GetValue("origArtist");
-
-            OriginalDate = (int)Jobject.GetValue("origDate");
-
-            OriginalDay = (int)Jobject.GetValue("origDay");
-
-            OriginalLyricist = (string)Jobject.GetValue("origLyricist");
-
-            OriginalMonth = (int)Jobject.GetValue("origMonth");
-
-            OriginalTitle = (string)Jobject.GetValue("origTitle");
-
-            OriginalYear = (int)Jobject.GetValue("origYear");
-
-            ParentalRating = (string)Jobject.GetValue("parentalRating");
-
-            Path = (string)Jobject.GetValue("path");
-
-            PersistentID = (string)Jobject.GetValue("persistentID");
-
-            PlayCounter = (int)Jobject.GetValue("playCounter");
-
-            PlayListID = (int)Jobject.GetValue("idPlaylistSong");
-
-            PlaylistOrder = (int)Jobject.GetValue("playlistSongOrder");
-
-            Producer = (string)Jobject.GetValue("producer");
-
-            Publisher = (string)Jobject.GetValue("publisher");
-
-            Quality = (string)Jobject.GetValue("quality");
-
-            Rating = (int)Jobject.GetValue("rating");
-
-            SeasonNumber = (string)Jobject.GetValue("seasonNumber");
-
-            SkipCount = (int)Jobject.GetValue("skipCount");
-
-            SongID = (int)Jobject.GetValue("idsong");
-
-            SongLength = (int)Jobject.GetValue("songLength");
-
-            StartTime = (int)Jobject.GetValue("startTime");
-
-            StopTime = (int)Jobject.GetValue("stopTime");
-
-            Summary = (string)Jobject.GetValue("summary");
-
-            Tempo = (string)Jobject.GetValue("tempo");
-
-            Title = (string)Jobject.GetValue("title");
-
-            TrackOrder = (string)Jobject.GetValue("trackNumber");
-
-            TrackType = (int)Jobject.GetValue("trackType");
-
-            TrackTypeStr = (string)Jobject.GetValue("trackTypeStr");
-
-            VBR = (bool)Jobject.GetValue("vbr");
-
-            Year = (int)Jobject.GetValue("year");
-        }
-
         public string Actors { get; set; }
 
         public string AlbumArtistName { get; set; }
@@ -325,6 +159,186 @@ namespace MediaMonkeyNet
         public bool VBR { get; set; }
 
         public int Year { get; set; }
+
+
+        public Track(JObject Jobject)
+        {
+            Actors = (string)Jobject.GetValue("actors");
+
+            AlbumArtistName = (string)Jobject.GetValue("albumArtist");
+
+            AlbumID = (int)Jobject.GetValue("idalbum");
+
+            AlbumName = (string)Jobject.GetValue("album");
+
+            ArtistName = (string)Jobject.GetValue("artist");
+
+            Author = (string)Jobject.GetValue("author");
+
+            Bitrate = (int)Jobject.GetValue("bitrate");
+
+            BPM = (int)Jobject.GetValue("bpm");
+
+            Conductor = (string)Jobject.GetValue("conductor");
+
+            Copyright = (string)Jobject.GetValue("copyright");
+
+            Custom1 = (string)Jobject.GetValue("custom1");
+
+            Custom2 = (string)Jobject.GetValue("custom2");
+
+            Custom3 = (string)Jobject.GetValue("custom3");
+
+            Custom4 = (string)Jobject.GetValue("custom4");
+
+            Custom5 = (string)Jobject.GetValue("custom5");
+
+            Date = (string)Jobject.GetValue("date");
+
+
+            var dateAdded_UTC = Jobject.GetValue("dateAdded_UTC");
+            if (dateAdded_UTC.HasValues)
+            {
+                DateTime.TryParse((string)dateAdded_UTC, out DateTime parsedDateAdded);
+                DateAdded = parsedDateAdded;
+            }
+
+            Day = (int)Jobject.GetValue("day");
+
+            Director = (string)Jobject.GetValue("director");
+
+            DiscNumber = (string)Jobject.GetValue("discNumber");
+
+            Encoder = (string)Jobject.GetValue("encoder");
+
+            EpisodeNumber = (string)Jobject.GetValue("episodeNumber");
+
+            FileLength = (double)Jobject.GetValue("fileLength");
+
+            var fileModified_UTC = Jobject.GetValue("fileModified_UTC");
+            if (fileModified_UTC.HasValues)
+            {
+                DateTime.TryParse((string)fileModified_UTC, out DateTime parsedFileModified);
+                FileModified = parsedFileModified;
+            }
+
+            FileName = (string)Jobject.GetValue("filename");
+
+            FileType = (string)Jobject.GetValue("fileType");
+
+            Frequency = (int)Jobject.GetValue("frequency");
+
+            Genre = (string)Jobject.GetValue("genre");
+
+            Grouping = (string)Jobject.GetValue("groupDesc");
+
+            ID = (int)Jobject.GetValue("id");
+
+            InvolvedPeople = (string)Jobject.GetValue("involvedPeople");
+
+            IsntInDB = (bool)Jobject.GetValue("isntInDB");
+
+            ISRC = (string)Jobject.GetValue("isrc");
+
+            Isvideo = (bool)Jobject.GetValue("isVideo");
+
+            var lastTimePlayed_UTC = Jobject.GetValue("lastTimePlayed_UTC");
+            if (lastTimePlayed_UTC.HasValues)
+            {
+                DateTime.TryParse((string)lastTimePlayed_UTC, out DateTime parsedLastPlayed);
+                LastPlayed = parsedLastPlayed;
+            }
+
+            Leveling = (double)Jobject.GetValue("volumeLeveling");
+
+            Lyricist = (string)Jobject.GetValue("lyricist");
+
+            MediaID = (int)Jobject.GetValue("idMedia");
+
+            MediaLabel = (string)Jobject.GetValue("mediaLabel");
+
+            Month = (int)Jobject.GetValue("month");
+
+            Mood = (string)Jobject.GetValue("mood");
+
+            MusicComposer = (string)Jobject.GetValue("composer");
+
+            Occasion = (string)Jobject.GetValue("occasion");
+
+            OriginalArtist = (string)Jobject.GetValue("origArtist");
+
+            OriginalDate = (int)Jobject.GetValue("origDate");
+
+            OriginalDay = (int)Jobject.GetValue("origDay");
+
+            OriginalLyricist = (string)Jobject.GetValue("origLyricist");
+
+            OriginalMonth = (int)Jobject.GetValue("origMonth");
+
+            OriginalTitle = (string)Jobject.GetValue("origTitle");
+
+            OriginalYear = (int)Jobject.GetValue("origYear");
+
+            ParentalRating = (string)Jobject.GetValue("parentalRating");
+
+            Path = (string)Jobject.GetValue("path");
+
+            PersistentID = (string)Jobject.GetValue("persistentID");
+
+            PlayCounter = (int)Jobject.GetValue("playCounter");
+
+            PlayListID = (int)Jobject.GetValue("idPlaylistSong");
+
+            PlaylistOrder = (int)Jobject.GetValue("playlistSongOrder");
+
+            Producer = (string)Jobject.GetValue("producer");
+
+            Publisher = (string)Jobject.GetValue("publisher");
+
+            Quality = (string)Jobject.GetValue("quality");
+
+            Rating = (int)Jobject.GetValue("rating");
+
+            SeasonNumber = (string)Jobject.GetValue("seasonNumber");
+
+            SkipCount = (int)Jobject.GetValue("skipCount");
+
+            SongID = (int)Jobject.GetValue("idsong");
+
+            SongLength = (int)Jobject.GetValue("songLength");
+
+            StartTime = (int)Jobject.GetValue("startTime");
+
+            StopTime = (int)Jobject.GetValue("stopTime");
+
+            Summary = (string)Jobject.GetValue("summary");
+
+            Tempo = (string)Jobject.GetValue("tempo");
+
+            Title = (string)Jobject.GetValue("title");
+
+            TrackOrder = (string)Jobject.GetValue("trackNumber");
+
+            TrackType = (int)Jobject.GetValue("trackType");
+
+            TrackTypeStr = (string)Jobject.GetValue("trackTypeStr");
+
+            VBR = (bool)Jobject.GetValue("vbr");
+
+            Year = (int)Jobject.GetValue("year");
+        }
+
+        public EvaluateResponse<object> SetRating(MediaMonkeyNet RemoteSession, int rating)
+        {
+            /// <summary>
+            /// Sets Rating of the currently playing track
+            /// </summary>
+            /// <param name="RemoteSession">MediaMonkeyNet Remote Session</param>
+            /// <param name="rating">Rating of the track between 0 and 100</param>
+
+            return RemoteSession.SetRating(rating, SongID);
+        }
+
     }
 }
 

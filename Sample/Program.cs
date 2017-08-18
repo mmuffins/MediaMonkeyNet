@@ -104,7 +104,7 @@ namespace Sample
                         // Start playback if a song was selected
                         player.StartPlayback();
 
-                        var response = mediaMonkey.SetRating(80,currentTrack);
+                        var response = currentTrack.SetRating(mediaMonkey, 80);
                         if (response.Exception != null)
                         {
                             // All commands return an object containing an exception property

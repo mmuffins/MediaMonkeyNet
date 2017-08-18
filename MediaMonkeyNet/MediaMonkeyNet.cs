@@ -24,173 +24,173 @@ namespace MediaMonkeyNet
         private ChromeSession ws;
         bool disposed = false;
 
-        public bool IsMuted
-        {
-            get
-            {
-                try
-                {
-                    var response = this.Evaluate<bool>("app.player.mute");
-                    if (response.Exception != null)
-                    {
-                        return false;
-                    }
+        //public bool IsMuted
+        //{
+        //    get
+        //    {
+        //        try
+        //        {
+        //            var response = this.Evaluate<bool>("app.player.mute");
+        //            if (response.Exception != null)
+        //            {
+        //                return false;
+        //            }
 
-                    return response.Value;
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            }
-        }
+        //            return response.Value;
+        //        }
+        //        catch (Exception)
+        //        {
+        //            throw;
+        //        }
+        //    }
+        //}
 
-        public bool IsPaused
-        {
-            get
-            {
-                try
-                {
-                    var response = this.Evaluate<bool>("app.player.paused");
-                    if (response.Exception != null)
-                    {
-                        return false;
-                    }
+        //public bool IsPaused
+        //{
+        //    get
+        //    {
+        //        try
+        //        {
+        //            var response = this.Evaluate<bool>("app.player.paused");
+        //            if (response.Exception != null)
+        //            {
+        //                return false;
+        //            }
 
-                    return response.Value;
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            }
-        }
+        //            return response.Value;
+        //        }
+        //        catch (Exception)
+        //        {
+        //            throw;
+        //        }
+        //    }
+        //}
 
-        public bool IsPlaying
-        {
-            get
-            {
-                try
-                {
-                    var response = this.Evaluate<bool>("app.player.isPlaying");
-                    if (response.Exception != null)
-                    {
-                        return false;
-                    }
+        //public bool IsPlaying
+        //{
+        //    get
+        //    {
+        //        try
+        //        {
+        //            var response = this.Evaluate<bool>("app.player.isPlaying");
+        //            if (response.Exception != null)
+        //            {
+        //                return false;
+        //            }
 
-                    return response.Value;
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            }
-        }
+        //            return response.Value;
+        //        }
+        //        catch (Exception)
+        //        {
+        //            throw;
+        //        }
+        //    }
+        //}
 
-        public bool IsRepeat
-        {
-            get
-            {
-                try
-                {
-                    var response = this.Evaluate<bool>("app.player.repeatPlaylist");
-                    if (response.Exception != null)
-                    {
-                        return false;
-                    }
+        //public bool IsRepeat
+        //{
+        //    get
+        //    {
+        //        try
+        //        {
+        //            var response = this.Evaluate<bool>("app.player.repeatPlaylist");
+        //            if (response.Exception != null)
+        //            {
+        //                return false;
+        //            }
 
-                    return response.Value;
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            }
-        }
+        //            return response.Value;
+        //        }
+        //        catch (Exception)
+        //        {
+        //            throw;
+        //        }
+        //    }
+        //}
 
-        public bool IsShuffle
-        {
-            get
-            {
-                try
-                {
-                    var response = this.Evaluate<bool>("app.player.shufflePlaylist");
-                    if (response.Exception != null)
-                    {
-                        return false;
-                    }
+        //public bool IsShuffle
+        //{
+        //    get
+        //    {
+        //        try
+        //        {
+        //            var response = this.Evaluate<bool>("app.player.shufflePlaylist");
+        //            if (response.Exception != null)
+        //            {
+        //                return false;
+        //            }
 
-                    return response.Value;
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            }
-        }
+        //            return response.Value;
+        //        }
+        //        catch (Exception)
+        //        {
+        //            throw;
+        //        }
+        //    }
+        //}
 
-        public long TrackLength
-        {
-            get
-            {
-                try
-                {
-                    var response = this.Evaluate<long>("app.player.trackLengthMS");
-                    if (response.Exception != null)
-                    {
-                        return 0;
-                    }
+        //public long TrackLength
+        //{
+        //    get
+        //    {
+        //        try
+        //        {
+        //            var response = this.Evaluate<long>("app.player.trackLengthMS");
+        //            if (response.Exception != null)
+        //            {
+        //                return 0;
+        //            }
 
-                    return response.Value;
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            }
-        }
+        //            return response.Value;
+        //        }
+        //        catch (Exception)
+        //        {
+        //            throw;
+        //        }
+        //    }
+        //}
 
-        public long TrackPosition
-        {
-            get
-            {
-                try
-                {
-                    var response = this.Evaluate<long>("app.player.trackPositionMS");
-                    if (response.Exception != null)
-                    {
-                        return 0;
-                    }
+        //public long TrackPosition
+        //{
+        //    get
+        //    {
+        //        try
+        //        {
+        //            var response = this.Evaluate<long>("app.player.trackPositionMS");
+        //            if (response.Exception != null)
+        //            {
+        //                return 0;
+        //            }
 
-                    return response.Value;
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            }
-        }
+        //            return response.Value;
+        //        }
+        //        catch (Exception)
+        //        {
+        //            throw;
+        //        }
+        //    }
+        //}
 
-        public double Volume
-        {
-            get
-            {
-                try
-                {
-                    var response = this.Evaluate<object>("app.player.volume");
-                    if (response.Exception != null)
-                    {
-                        return 0;
-                    }
+        //public double Volume
+        //{
+        //    get
+        //    {
+        //        try
+        //        {
+        //            var response = this.Evaluate<object>("app.player.volume");
+        //            if (response.Exception != null)
+        //            {
+        //                return 0;
+        //            }
 
-                    return double.Parse(response.Value.ToString());
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            }
-        }
+        //            return double.Parse(response.Value.ToString());
+        //        }
+        //        catch (Exception)
+        //        {
+        //            throw;
+        //        }
+        //    }
+        //}
 
         public MediaMonkeyNet() : this(DefaultRemoteDebuggingUri, true) { }
 
@@ -534,24 +534,12 @@ namespace MediaMonkeyNet
             }
         }
 
-        public EvaluateResponse<object> SetRating(int rating)
-        {
-            /// <summary>
-            /// Sets Rating of the currently playing track
-            /// </summary>
-            /// <param name="rating">Rating of the track from 0 to 100</param>
-
-            var currentTrack = this.GetCurrentTrack();
-
-            return this.SetRating(rating, currentTrack.SongID);
-        }
-
         public EvaluateResponse<object> SetRating(int rating, Track track)
         {
             /// <summary>
             /// Set Rating of the specified track
             /// </summary>
-            /// <param name="rating">Rating of the track from 0 to 100</param>
+            /// <param name="rating">Rating of the track between 0 and 100</param>
             /// <param name="track">Track object of the track</param>
 
             return this.SetRating(rating, track.SongID);
@@ -562,7 +550,7 @@ namespace MediaMonkeyNet
             /// <summary>
             /// Set Rating of the specified track
             /// </summary>
-            /// <param name="rating">Rating of the track from 0 to 100</param>
+            /// <param name="rating">Rating of the track between 0 and 100</param>
             /// <param name="rating">SongID property of the track</param>
 
             string evalString = "app.getObject('track', { id:" + ID
