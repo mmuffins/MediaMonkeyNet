@@ -100,7 +100,6 @@ namespace MediaMonkeyNet
             // JsonConvert.PopulateObjectAsync apparently is obsolete
 
             await Task.Factory.StartNew(() =>JsonConvert.PopulateObject(remotePlayer.Value, this));
-
         }
 
 

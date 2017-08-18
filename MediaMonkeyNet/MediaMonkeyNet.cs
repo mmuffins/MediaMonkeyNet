@@ -314,7 +314,7 @@ namespace MediaMonkeyNet
                 }
                 catch (NullReferenceException)
                 {
-                    Dispose();
+                    // Dispose();
                     return false;
                 }
             }
