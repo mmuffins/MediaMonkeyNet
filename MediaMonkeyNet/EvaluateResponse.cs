@@ -16,10 +16,13 @@ namespace MediaMonkeyNet
         public string ObjectId { get; private set; }
         public string Type { get; private set; }
 
-        public EvaluateResponse(T value, string exception)
+        public EvaluateResponse(T value, string exception, string description, string objectId, string type)
         {
-            this.Value = value;
+            this.Value = (T)value;
             this.Exception = exception;
+            this.Description = description;
+            this.ObjectId = objectId;
+            this.Type = type;
         }
 
         public EvaluateResponse(EvaluateCommandResponse response)
