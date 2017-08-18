@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="Cover.cs" />
     <Compile Include="EvaluateResponse.cs" />
+    <Compile Include="Requests\Player.cs" />
     <Compile Include="Track.cs" />
     <Compile Include="MediaMonkeyNet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

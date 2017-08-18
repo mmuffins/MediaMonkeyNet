@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MediaMonkeyNet;
+using System.Timers;
 
 namespace Sample
 {
@@ -13,6 +14,10 @@ namespace Sample
         static void Main(string[] args)
         {
             // Initialize the remote session for MediaMonkey
+            //testPerf();
+            //Console.ReadLine();
+            //return;
+
             using (var mediaMonkey = new MediaMonkeyNet.MediaMonkeyNet("http://localhost:9222", false))
             {
                 // It's also possible to just use the default constructor without any parameters, which will
@@ -24,6 +29,7 @@ namespace Sample
 
 
                 // Enumerate and select one of the available sessions
+
                 List<RemoteSessionsResponse> sessions;
 
                 try
@@ -71,11 +77,18 @@ namespace Sample
                     // be closed any time so we are issuing
                     // the commands in a try block
 
-                    Console.WriteLine("Player volume: " + mediaMonkey.Volume);
-                    Console.WriteLine("Shuffle is active: " + mediaMonkey.IsShuffle);
-                    Console.WriteLine("Player volume: " + mediaMonkey.TrackPosition);
+                    // The player object contains properties related to the
+                    // current status of the player
 
 
+                    var player = new MediaMonkeyNet.Player(mediaMonkey);
+                    player.Refresh().Wait();
+
+                    Console.WriteLine("Player volume: " + player.Volume);
+                    Console.WriteLine("Shuffle is active: " + player.IsShuffle);
+                    Console.WriteLine("Track Position in MS: " + player.TrackPosition);
+
+                    // GetCurrentTrack returns properties of the currently playing track
                     Track currentTrack = mediaMonkey.GetCurrentTrack();
                     if (currentTrack == null)
                     {
@@ -89,9 +102,9 @@ namespace Sample
                         Console.WriteLine("Rating:" + currentTrack.Rating);
 
                         // Start playback if a song was selected
-                        mediaMonkey.StartPlayback();
+                        player.StartPlayback();
 
-                        var response = mediaMonkey.SetRating(80);
+                        var response = mediaMonkey.SetRating(80,currentTrack);
                         if (response.Exception != null)
                         {
                             // All commands return an object containing an exception property
@@ -100,7 +113,6 @@ namespace Sample
                             Console.WriteLine(response.Exception);
                         }
                     }
-
 
                     // Generic javascript code can be executed by using the evaluate method
                     var isRepeat = mediaMonkey.Evaluate<bool>("app.player.repeatPlaylist");

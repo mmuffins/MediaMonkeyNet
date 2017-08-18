@@ -40,7 +40,7 @@ namespace MediaMonkeyNet
                 }
                 catch (Exception)
                 {
-                    return false;
+                    throw;
                 }
             }
         }
@@ -61,7 +61,7 @@ namespace MediaMonkeyNet
                 }
                 catch (Exception)
                 {
-                    return false;
+                    throw;
                 }
             }
         }
@@ -82,7 +82,7 @@ namespace MediaMonkeyNet
                 }
                 catch (Exception)
                 {
-                    return false;
+                    throw;
                 }
             }
         }
@@ -103,7 +103,7 @@ namespace MediaMonkeyNet
                 }
                 catch (Exception)
                 {
-                    return false;
+                    throw;
                 }
             }
         }
@@ -124,7 +124,7 @@ namespace MediaMonkeyNet
                 }
                 catch (Exception)
                 {
-                    return false;
+                    throw;
                 }
             }
         }
@@ -145,7 +145,7 @@ namespace MediaMonkeyNet
                 }
                 catch (Exception)
                 {
-                    return 0;
+                    throw;
                 }
             }
         }
@@ -166,7 +166,7 @@ namespace MediaMonkeyNet
                 }
                 catch (Exception)
                 {
-                    return 0;
+                    throw;
                 }
             }
         }
@@ -187,7 +187,7 @@ namespace MediaMonkeyNet
                 }
                 catch (Exception)
                 {
-                    return 0;
+                    throw;
                 }
             }
         }
@@ -268,6 +268,7 @@ namespace MediaMonkeyNet
             if (ws != null)
             {
                 ws.Dispose();
+                ws = null;
             }
 
             disposed = true;
@@ -329,28 +330,25 @@ namespace MediaMonkeyNet
 
             if (!this.HasActiveSession())
             {
-                // No active chrome session
-                throw new NullReferenceException("No active session found");
+                    // No active chrome session
+                    throw new NullReferenceException("No active session found");
             }
+
+            var cmd = new EvaluateCommand
+            {
+                ObjectGroup = "console",
+                IncludeCommandLineAPI = true,
+                AwaitPromise = true,
+                Silent = false,
+                ReturnByValue = returnByValue,
+                Expression = command
+            };
 
             try
             {
-                var cmd = new EvaluateCommand
-                {
-                    ObjectGroup = "console",
-                    IncludeCommandLineAPI = true,
-                    AwaitPromise = true,
-                    Silent = false,
-                    ReturnByValue = returnByValue,
-                    Expression = command
-                };
+                var evalResult = ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>;
 
-                // var result = ws.SendAsync(cmd).Result;
-                // var cmdResponse = vs as CommandResponse<EvaluateCommandResponse>;
-                // var cmdResponseResult = ab.Result;
-                // var evalResponse = new EvaluateResponse(res);
-                // var parsedObject = xx.Value as JObject;
-                return new EvaluateResponse<T>((ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>).Result);
+                return new EvaluateResponse<T>(evalResult.Result);
             }
             catch (NullReferenceException)
             {
@@ -536,39 +534,8 @@ namespace MediaMonkeyNet
             }
         }
 
-        public EvaluateResponse<object> NextTrack()
+        public EvaluateResponse<object> SetRating(int rating)
         {
-            /// <summary>
-            /// Plays the next file in the current playlist
-            /// </summary>
-            return this.Evaluate<object>("app.player.nextAsync()");
-        }
-
-        public EvaluateResponse<object> PausePlayback()
-        {
-            /// <summary>
-            /// Pauses Playback
-            /// </summary>
-            return this.Evaluate<object>("app.player.pauseAsync()");
-        }
-
-        public EvaluateResponse<object> PreviousTrack()
-        {
-            /// <summary>
-            /// Plays the previous file in the current playlist
-            /// </summary>
-            return this.Evaluate<object>("app.player.prevAsync()");
-        }
-
-        public EvaluateResponse<object> SetMute(bool enabled)
-        {
-            /// <summary>
-            /// Sets mute status
-            /// </summary>
-            return this.Evaluate<object>("app.player.mute = " + enabled.ToString().ToLower());
-        }
-
-        public EvaluateResponse<object> SetRating(int rating) {
             /// <summary>
             /// Sets Rating of the currently playing track
             /// </summary>
@@ -598,75 +565,11 @@ namespace MediaMonkeyNet
             /// <param name="rating">Rating of the track from 0 to 100</param>
             /// <param name="rating">SongID property of the track</param>
 
-            string evalString = "app.getObject('track', { id:" + ID 
-                + "}).then(function(track){ if (track) {track.rating =" 
+            string evalString = "app.getObject('track', { id:" + ID
+                + "}).then(function(track){ if (track) {track.rating ="
                 + rating + "; track.commitAsync();}});";
 
             return this.Evaluate<object>(evalString); ;
         }
-
-        public EvaluateResponse<object> SetRepeat(bool enabled)
-        {
-            /// <summary>
-            /// Sets repeat status
-            /// </summary>
-            return this.Evaluate<object>("app.player.repeatPlaylist = " + enabled.ToString().ToLower());
-        }
-
-        public EvaluateResponse<object> SetShuffle(bool enabled)
-        {
-            /// <summary>
-            /// Sets shuffle status
-            /// </summary>
-            return this.Evaluate<object>("app.player.shufflePlaylist = " + enabled.ToString().ToLower());
-        }
-
-        public EvaluateResponse<object> SetTrackPosition(int position)
-        {
-            /// <summary>
-            /// Seek to the provided track time, in ms
-            /// </summary>
-
-            return this.Evaluate<object>("app.player.seekMSAsync(" + position + ")");
-        }
-
-        public EvaluateResponse<object> SetVolume(double volume)
-        {
-            /// <summary>
-            /// Sets the current value between 0 and 1.
-            /// </summary>
-
-            // Values outside 0 and 1 are automatically converted to 0/1 by mediamonkey
-            var nfi = new System.Globalization.NumberFormatInfo() {
-                NumberDecimalSeparator = "."
-            };
-
-            return this.Evaluate<object>("app.player.volume = " + volume.ToString(nfi));
-        }
-
-        public EvaluateResponse<object> StartPlayback()
-        {
-            /// <summary>
-            /// Starts Playback
-            /// </summary>
-            return this.Evaluate<object>("app.player.playAsync()");
-        }
-
-        public EvaluateResponse<object> StopPlayback()
-        {
-            /// <summary>
-            /// Stops playback
-            /// </summary>
-            return this.Evaluate<object>("app.player.stopAsync()");
-        }
-
-        public EvaluateResponse<object> TogglePlayback()
-        {
-            /// <summary>
-            /// Toggles play and pause status
-            /// </summary>
-            return this.Evaluate<object>("app.player.playPauseAsync()");
-        }
-
     }
 }
