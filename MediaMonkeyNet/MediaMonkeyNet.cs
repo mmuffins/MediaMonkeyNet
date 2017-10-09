@@ -347,7 +347,6 @@ namespace MediaMonkeyNet
             try
             {
                 var evalResult = ws.SendAsync(cmd).Result as CommandResponse<EvaluateCommandResponse>;
-
                 return new EvaluateResponse<T>(evalResult.Result);
             }
             catch (NullReferenceException)
@@ -459,6 +458,8 @@ namespace MediaMonkeyNet
             /// Starts Playback
             /// </summary>
             return this.Evaluate<object>("app.player.playAsync()");
+
+            //TODO:Move GetPlayingstatus to player.cs
         }
 
         public List<Cover> GetCoverList(bool forceWait = false)
@@ -532,6 +533,7 @@ namespace MediaMonkeyNet
                 var result = currentTrack.Value;
                 return new Track(result);
             }
+            //TODO:Check if performance can be increased by moving getCurrentTrack() and player.Refresh() into single call
         }
 
         public EvaluateResponse<object> SetRating(int rating, Track track)

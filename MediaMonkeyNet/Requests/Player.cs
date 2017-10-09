@@ -95,7 +95,7 @@ namespace MediaMonkeyNet
 
             if (remotePlayer.Exception != null || remotePlayer.Value == null)
             {
-                return;
+                throw new NullReferenceException("Remoteplayer exception or no remoteplayer defined.");
             }
             // JsonConvert.PopulateObjectAsync apparently is obsolete
 
