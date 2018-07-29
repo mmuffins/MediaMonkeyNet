@@ -7,8 +7,8 @@
     <Description>A .net core wrapper for the MediaMonkey 5 remote API.</Description>
     <Company>mmuffins</Company>
     <Authors>mmuffins</Authors>
-    <AssemblyVersion>2.0.84</AssemblyVersion>
-    <FileVersion>2.0.84</FileVersion>
+    <AssemblyVersion>2.0.86</AssemblyVersion>
+    <FileVersion>2.0.86</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BaristaLabs.ChromeDevTools.Runtime" Version="67.0.3396.87" />

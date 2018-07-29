@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using BaristaLabs.ChromeDevTools.Runtime.Runtime;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -290,5 +292,31 @@ namespace MediaMonkeyNet
 
         [JsonProperty]
         public int Year { get; private set; }
+
+        /// <summary>Initializes a new instance of the <see cref="Track"/> class.</summary>  
+        public Track() { }
+
+        /// <summary>Initializes a new instance of the <see cref="Track"/> class from a ChromeDevTools RemoteObject.</summary>  
+        /// <param name="remoteObject">The RemoteObject instance to deserialize.</param>
+        public Track(RemoteObject remoteObject)
+        {
+            if(remoteObject.Value is null) { return; }
+
+            var serializerSettings = new JsonSerializerSettings
+            {
+                MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
+                DateParseHandling = DateParseHandling.None,
+                Converters = {
+                        new IsoDateTimeConverter { DateTimeStyles = System.Globalization.DateTimeStyles.AssumeUniversal }
+                },
+            };
+
+            var trackString = remoteObject.Value.ToString();
+
+            // workaround for invalid json in mm alpha rev 2116
+            var trackJson = trackString.Replace("tempString\":\"\"\"extendedTags", "tempString\":\"\",\"extendedTags");
+
+            JsonConvert.PopulateObject(remoteObject.Value.ToString(), this, serializerSettings);
+        }
     }
 }

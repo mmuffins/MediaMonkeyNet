@@ -1,7 +1,6 @@
 ﻿using BaristaLabs.ChromeDevTools.Runtime;
 using BaristaLabs.ChromeDevTools.Runtime.Runtime;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,30 +97,15 @@ namespace MediaMonkeyNet
 
             currentTrackRefreshInProgress = true;
             var track = (await SendCommandAsync("app.player.getCurrentTrack()").ConfigureAwait(false)).Result;
-            if(track.Value != null)
-            {
-                var serializerSettings = new JsonSerializerSettings
-                {
-                    MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
-                    DateParseHandling = DateParseHandling.None,
-                    Converters = {
-                        new IsoDateTimeConverter { DateTimeStyles = System.Globalization.DateTimeStyles.AssumeUniversal }
-                    },
-                };
 
-                // workaround for invalid json in mm alpha rev 2116
-                var trackString = track.Value.ToString().Replace("tempString\":\"\"\"extendedTags", "tempString\":\"\",\"extendedTags");
-                trackString = track.Value.ToString();
-
-                CurrentTrack = JsonConvert.DeserializeObject<Track>(track.Value.ToString(), serializerSettings);
-                currentTrackRefreshInProgress = false;
-            }
+            CurrentTrack = new Track(track);
+            currentTrackRefreshInProgress = false;
         }
 
         /// <summary>Sets Rating of the track with the provided ID.</summary>
         /// <param name="rating">Rating of the track between 0 and 100.</param>
         /// <param name="ID">SongID property of the track.</param>
-        public Task SetRating(int rating, int ID)
+        public Task SetRatingAsync(int rating, int ID)
         {
             return SendCommandAsync("app.getObject('track', { id:" + ID
                 + "}).then(function(track){ if (track) {track.rating ="
@@ -131,9 +115,9 @@ namespace MediaMonkeyNet
         /// <summary>Sets Rating of the provided track.</summary>
         /// <param name="rating">Rating of the track between 0 and 100.</param>
         /// <param name="track">Track object of the track.</param>
-        public Task SetRating(int rating, Track track)
+        public Task SetRatingAsync(int rating, Track track)
         {
-            return SetRating(rating, track.SongID);
+            return SetRatingAsync(rating, track.SongID);
         }
 
         #region IDisposable Support
