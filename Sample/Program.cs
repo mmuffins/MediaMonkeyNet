@@ -16,6 +16,7 @@ namespace Sample
 
                 await mm.OpenSessionAsync().ConfigureAwait(false);
                 await mm.Player.RefreshAsync().ConfigureAwait(false);
+                await mm.GetCurrentTrackAsync().ConfigureAwait(false);
             }
         }
 
