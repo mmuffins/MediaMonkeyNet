@@ -117,7 +117,7 @@ namespace MediaMonkeyNet
         /// <param name="track">Track object of the track.</param>
         public Task SetRatingAsync(int rating, Track track)
         {
-            return SetRatingAsync(rating, track.SongID);
+            return SetRatingAsync(rating, track.ID);
         }
 
         #region IDisposable Support
