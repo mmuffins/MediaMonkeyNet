@@ -5,6 +5,7 @@ using System.Text;
 
 namespace MediaMonkeyNet
 {
+    /// <summary>Represents a chromium engine session entry.</summary>  
     class ChromeSessionInfo
     {
         [JsonProperty("description")]

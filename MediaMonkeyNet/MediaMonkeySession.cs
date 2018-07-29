@@ -9,9 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace MediaMonkeyNet
-{    
-    /// <summary>
-    /// A MediaMonkey remote session.</summary>  
+{
+    /// <summary>Represents a MediaMonkey remote session.</summary>  
     public class MediaMonkeySession : IDisposable
     {
         private const int defaultConnectionPort = 9222;
@@ -19,24 +18,27 @@ namespace MediaMonkeyNet
         private const string mmWebsocketUrl = "file:///mainwindow.html";
         private const int mmSessionTimeout = 1000;
 
-        private bool playerUpdateInProgress;
         private ChromeSession mmSession;
 
-
+        /// <summary>Gets the chromium websocket address of the current MediaMonkey instance.</summary>  
         public string EndpointAddress { get; private set; }
+
+        /// <summary>Gets the Uri used for remote debugging of the current MediaMonkey instance.</summary>  
         public string RemoteDebuggingUri { get; }
+
+        /// <summary>Gets player object for the current MediaMonkey instance.</summary>  
         public Player Player { get; }
 
-        /// <summary>Initializes a new instance of the MediaMonkeySession class.</summary>  
+        /// <summary>Initializes a new instance of the <see cref="MediaMonkeySession"/> class.</summary>  
         public MediaMonkeySession() : this(defaultConnectionAddress, defaultConnectionPort) { }
 
-        /// <summary>Initializes a new instance of the MediaMonkeySession class for a specific host.</summary>  
+        /// <summary>Initializes a new instance of the <see cref="MediaMonkeySession"/> class for a specific host.</summary>  
         /// <param name="ConnectionAddress">The IP address or hostname to connect to.</param>
         /// <param name="ConnectionPort">The port number to connect to.</param>
         public MediaMonkeySession(string ConnectionAddress, int ConnectionPort)
         {
             RemoteDebuggingUri = $"http://{ConnectionAddress}:{ConnectionPort.ToString()}";
-            Player = new Player();
+            Player = new Player(this);
         }
 
         /// <summary>Opens a session to the chromium instance hosting MediaMonkey.</summary>  
@@ -45,7 +47,7 @@ namespace MediaMonkeyNet
             using (var webClient = new HttpClient())
             {
                 webClient.BaseAddress = new Uri(RemoteDebuggingUri);
-                var remoteSessions = await webClient.GetStringAsync("/json");
+                var remoteSessions = await webClient.GetStringAsync("/json").ConfigureAwait(false);
                 var webSockets =  JsonConvert.DeserializeObject<ICollection<ChromeSessionInfo>>(remoteSessions);
                 EndpointAddress = (webSockets.First(s => s.Url == mmWebsocketUrl)).WebSocketDebuggerUrl.Replace("ws://localhost", "ws://127.0.0.1");
                 mmSession = new ChromeSession(EndpointAddress);
@@ -53,11 +55,10 @@ namespace MediaMonkeyNet
             }
         }
 
-
         /// <summary>
-        /// Sends the specified command to the currently active mm session and returns the associated command response.
-        /// </summary>
-        private async Task<EvaluateCommandResponse> SendCommandAsync(string command)
+        /// Sends the specified command to MediaNMonkey and returns the associated command response.</summary>
+        /// <param name="command">The command expression to send to MediaMonkey.</param>
+        public async Task<EvaluateCommandResponse> SendCommandAsync(string command)
         {
             if (string.IsNullOrWhiteSpace(command))
             {
@@ -78,34 +79,8 @@ namespace MediaMonkeyNet
                 Silent = false,
                 Expression = command
             };
-
-            return await mmSession.SendCommand(cmd) as EvaluateCommandResponse;
-        }
-
-        /// <summary>
-        /// Refreshes state information for the current mediamonkey session.
-        /// </summary>
-        public async Task RefreshPlayerAsync()
-        {
-            if (playerUpdateInProgress) { return; }
-
-            playerUpdateInProgress = true;
-            string cmd = "function PlayerStatus(){var dict={};"
-                + "dict['IsMuted']=app.player.mute;"
-                + "dict['IsPaused']=app.player.paused;"
-                + "dict['isPlaying']=app.player.isPlaying;"
-                + "dict['IsRepeat']=app.player.repeatPlaylist;"
-                + "dict['IsShuffle']=app.player.shufflePlaylist;"
-                + "dict['TrackLength']=app.player.trackLengthMS;"
-                + "dict['TrackPosition']=app.player.trackPositionMS;"
-                + "dict['Volume']=app.player.volume;"
-                + "return JSON.stringify(dict)};PlayerStatus();";
-
-            var result = (await SendCommandAsync(cmd)).Result;
-
-
-
-            playerUpdateInProgress = false;
+            
+            return await mmSession.SendCommand(cmd).ConfigureAwait(false) as EvaluateCommandResponse;
         }
 
         #region IDisposable Support
