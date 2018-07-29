@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2017 Michael Kellner
+Copyright (c) 2018 Michael Kellner
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,27 +25,11 @@ SOFTWARE.
 
 Third party software and libraries used:
 
-ChromeDevTools https://github.com/MasterDevs/ChromeDevTools
-Copyright (c) 2015 MasterDevs, LLC
-License (MIT) https://github.com/MasterDevs/ChromeDevTools/blob/master/LICENSE
+chrome-dev-tools-runtime https://github.com/BaristaLabs/chrome-dev-tools-runtime
+Copyright (c) 2017 BaristaLabs, LLC
+License (MIT) https://raw.githubusercontent.com/BaristaLabs/chrome-dev-tools-runtime/master/LICENSE
 
 
-WebSocket4Net https://github.com/kerryjiang/WebSocket4Net
-Kerry Jiang
-License (Apache License 2.0) https://github.com/kerryjiang/WebSocket4Net/blob/master/LICENSE.TXT
-
-
-Json.NET http://www.newtonsoft.com/json
+Newtonsoft.Json http://www.newtonsoft.com/json
 Copyright (c) 2007 James Newton-King
-License (MIT) https://github.com/JamesNK/Newtonsoft.Json/blob/master/LICENSE.md
-
-
-Fody https://github.com/Fody/Fody
-Copyright (c) Simon Cropp and contributors
-License (MIT) https://github.com/Fody/Fody/blob/master/License.txt
-
-
-Costura https://github.com/Fody/Costura
-Copyright (c) 2012 Simon Cropp and contributors
-License (MIT) https://github.com/Fody/Costura/blob/master/license.txt
-
+License (MIT) https://raw.githubusercontent.com/JamesNK/Newtonsoft.Json/master/LICENSE.md
