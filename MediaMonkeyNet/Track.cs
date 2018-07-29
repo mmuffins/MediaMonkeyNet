@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace MediaMonkeyNet
 {
+    /// <summary>Represents a song object.</summary>  
     public class Track
     {
         [JsonProperty]
