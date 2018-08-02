@@ -4,10 +4,10 @@
     <PackageProjectUrl>https://github.com/mmuffins/MediaMonkeyNet</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/mmuffins/MediaMonkeyNet/blob/master/LICENSE</PackageLicenseUrl>
     <Copyright>Copyright (c) 2018 Michael Kellner</Copyright>
-    <Description>A .net core wrapper for the MediaMonkey 5 remote API.</Description>
+    <Description>A .net standard wrapper for the MediaMonkey 5 remote API.</Description>
     <Company>mmuffins</Company>
     <Authors>mmuffins</Authors>
-    <AssemblyVersion>2.0.95</AssemblyVersion>
+    <AssemblyVersion>2.1.95</AssemblyVersion>
     <FileVersion>2.0.95</FileVersion>
   </PropertyGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
