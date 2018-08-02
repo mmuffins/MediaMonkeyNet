@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyVersion>2.0.0</AssemblyVersion>
     <FileVersion>2.0.0</FileVersion>
     <Authors>mmuffins</Authors>
@@ -21,6 +21,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BaristaLabs.ChromeDevTools.Runtime\BaristaLabs.ChromeDevTools.Runtime.csproj" />
     <ProjectReference Include="..\MediaMonkeyNet\MediaMonkeyNet.csproj" />
   </ItemGroup>
 

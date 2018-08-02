@@ -1,19 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netstandard1.3</TargetFramework>
     <PackageProjectUrl>https://github.com/mmuffins/MediaMonkeyNet</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/mmuffins/MediaMonkeyNet/blob/master/LICENSE</PackageLicenseUrl>
     <Copyright>Copyright (c) 2018 Michael Kellner</Copyright>
     <Description>A .net core wrapper for the MediaMonkey 5 remote API.</Description>
     <Company>mmuffins</Company>
     <Authors>mmuffins</Authors>
-    <AssemblyVersion>2.0.88</AssemblyVersion>
-    <FileVersion>2.0.88</FileVersion>
+    <AssemblyVersion>2.0.95</AssemblyVersion>
+    <FileVersion>2.0.95</FileVersion>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="BaristaLabs.ChromeDevTools.Runtime" Version="67.0.3396.87" />
-  </ItemGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -NonInteractive -file $(ProjectDir)PreBuild.ps1 -ProjectPath $(ProjectPath)" />
   </Target>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BaristaLabs.ChromeDevTools.Runtime\BaristaLabs.ChromeDevTools.Runtime.csproj" />
+  </ItemGroup>
 </Project>
