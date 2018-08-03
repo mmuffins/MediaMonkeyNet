@@ -43,7 +43,7 @@ namespace MediaMonkeyNet
         {
             RemoteDebuggingUri = $"http://{ConnectionAddress}:{ConnectionPort.ToString()}";
             Player = new Player(this);
-            CurrentTrack = new Track();
+            CurrentTrack = new Track(this);
         }
 
         /// <summary>Opens a session to the chromium instance hosting MediaMonkey.</summary>  
@@ -98,7 +98,7 @@ namespace MediaMonkeyNet
             currentTrackRefreshInProgress = true;
             var track = (await SendCommandAsync("app.player.getCurrentTrack()").ConfigureAwait(false)).Result;
 
-            CurrentTrack = new Track(track);
+            CurrentTrack = new Track(track, this);
             currentTrackRefreshInProgress = false;
         }
 
@@ -119,6 +119,83 @@ namespace MediaMonkeyNet
         {
             return SetRatingAsync(rating, track.ID);
         }
+
+        public async Task Subscribe(string eventName)
+        {
+            await mmSession.Runtime.Enable(new EnableCommand());
+            mmSession.Runtime.SubscribeToConsoleAPICalledEvent((e) =>
+            {
+                Console.WriteLine("consoleapicalled:");
+                Console.WriteLine("Type: " + e.Type);
+                Console.WriteLine("Type: " + e.Args.FirstOrDefault().Value);
+            });
+
+            //await SendCommandAsync("app.listen(app.player, 'playbackState', console.info)");
+            //repeatchange
+            //shufflechange
+        }
+
+        public Task UnsubScribe(string eventName)
+        {
+            return SendCommandAsync("app.unlisten(app.player)");
+        }
+
+        /// <summary>Enables event based updates for the player state and currently playing track.</summary>
+        public async Task EnableUpdates()
+        {
+            await mmSession.Runtime.Enable(new EnableCommand());
+
+            // Disable previous listeners to prevent getting multiple notifications
+            await SendCommandAsync("app.unlisten(app.player,'repeatchange');" +
+                "app.unlisten(app.player,'shufflechange');" +
+                "app.unlisten(app.player,'playbackState'); ");
+
+            await SendCommandAsync("app.listen(app.player,'repeatchange',e=>console.info('repeat:'+e));" +
+                "app.listen(app.player,'shufflechange',e=>console.info('shuffle:'+e));" +
+                "app.listen(app.player,'playbackState'," +
+                    "e=>{switch(e){case 'trackChanged':console.info('trackChanged:');break;" +
+                    "case 'volumeChanged':console.info('volume:'+app.player.volume);break;" +
+                    "default:console.info('state:'+e)}});");
+
+            mmSession.Runtime.SubscribeToConsoleAPICalledEvent(OnPlayerStateChanged);
+        }
+
+        /// <summary>Disables event based updates for the player state and currently playing track.</summary>
+        public Task DisableUpdates()
+        {
+            return SendCommandAsync("app.unlisten(app.player,'repeatchange');" +
+                "app.unlisten(app.player,'shufflechange');" +
+                "app.unlisten(app.player,'playbackState'); ");
+        }
+
+        private void OnPlayerStateChanged(ConsoleAPICalledEvent e)
+        {
+
+            throw new NotImplementedException();
+            if (e.Type != "info") return;
+
+            var eventInfo = e.Args.FirstOrDefault().Value.ToString().Split(':');
+            switch (eventInfo[0])
+            {
+                case "state":
+                    Player.SetPlayerState(eventInfo[1]);
+                    break;
+
+                case "trackChanged":
+                    RefreshCurrentTrackAsync().GetAwaiter();
+                    break;
+
+                case "volumeChanged":
+                    break;
+
+                case "repeatchange":
+                    break;
+
+                case "shufflechange":
+                    break;
+            }
+        }
+
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls

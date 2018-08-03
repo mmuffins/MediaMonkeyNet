@@ -236,6 +236,9 @@ namespace MediaMonkeyNet
         [JsonProperty]
         public string SeasonNumber { get; private set; }
 
+        /// <summary>Gets the <see cref="MediaMonkeySession"/> instance hosting the player.</summary>  
+        public MediaMonkeySession Session { get; }
+
         [JsonProperty]
         public int SkipCount { get; private set; }
 
@@ -293,12 +296,17 @@ namespace MediaMonkeyNet
         [JsonProperty]
         public int Year { get; private set; }
 
-        /// <summary>Initializes a new instance of the <see cref="Track"/> class.</summary>  
-        public Track() { }
+        /// <summary>Initializes a new instance of the <see cref="Track"/> class.</summary>
+        /// <param name="session">The <see cref="MediaMonkeySession"/> instance hosting the track.</param>
+        public Track(MediaMonkeySession session)
+        {
+            Session = session;
+        }
 
-        /// <summary>Initializes a new instance of the <see cref="Track"/> class from a ChromeDevTools RemoteObject.</summary>  
+        /// <summary>Initializes a new instance of the <see cref="Track"/> class from a ChromeDevTools RemoteObject.</summary>
         /// <param name="remoteObject">The RemoteObject instance to deserialize.</param>
-        public Track(RemoteObject remoteObject)
+        /// <param name="session">The <see cref="MediaMonkeySession"/> instance hosting the track.</param>
+        public Track(RemoteObject remoteObject, MediaMonkeySession session) : this(session)
         {
             if(remoteObject.Value is null) { return; }
 

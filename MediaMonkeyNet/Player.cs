@@ -9,7 +9,6 @@ namespace MediaMonkeyNet
     /// <summary>Represents the player state of MediaMonkey.</summary>  
     public class Player
     {
-        private MediaMonkeySession mmSession;
         private bool playerRefreshInProgress;
 
         /// <summary>Gets a value indicating whether the player is muted.</summary>  
@@ -32,6 +31,9 @@ namespace MediaMonkeyNet
         [JsonProperty]
         public bool IsShuffle { get; private set; }
 
+        /// <summary>Gets the <see cref="MediaMonkeySession"/> instance hosting the player.</summary>  
+        public MediaMonkeySession Session { get; }
+
         /// <summary>Gets the length of the currently playing track in milliseconds.</summary>  
         [JsonProperty]
         public long TrackLength { get; private set; }
@@ -51,10 +53,10 @@ namespace MediaMonkeyNet
         }
 
         /// <summary>Initializes a new instance of the <see cref="Player"/> class.</summary>  
-        /// <param name="session">The <see cref="MediaMonkeySession"/> instance of the player.</param>
+        /// <param name="session">The <see cref="MediaMonkeySession"/> instance hosting the player.</param>
         public Player(MediaMonkeySession session)
         {
-            mmSession = session;
+            Session = session;
         }
 
         /// <summary>Refreshes state information of the player.</summary>
@@ -74,7 +76,7 @@ namespace MediaMonkeyNet
                 "'Volume':app.player.volume};" +
                 "playerState";
 
-            var mmState = (await mmSession.SendCommandAsync(cmd).ConfigureAwait(false)).Result;
+            var mmState = (await Session.SendCommandAsync(cmd).ConfigureAwait(false)).Result;
             if(mmState.Value != null)
             {
                 JsonConvert.PopulateObject(mmState.Value.ToString(), this);
@@ -85,25 +87,25 @@ namespace MediaMonkeyNet
         /// <summary>Plays the next file in the current playlist.</summary>
         public Task NextTrackAsync()
         {
-            return mmSession.SendCommandAsync("app.player.nextAsync()");
+            return Session.SendCommandAsync("app.player.nextAsync()");
         }
 
         /// <summary>Pauses Playback.</summary>
         public Task PausePlaybackAsync()
         {
-            return mmSession.SendCommandAsync("app.player.pauseAsync()");
+            return Session.SendCommandAsync("app.player.pauseAsync()");
         }
 
         /// <summary>Plays the previous file in the current playlist.</summary>
         public Task PreviousTrackAsync()
         {
-            return mmSession.SendCommandAsync("app.player.prevAsync()");
+            return Session.SendCommandAsync("app.player.prevAsync()");
         }
 
         /// <summary>Enables or disables mute.</summary>
         public Task SetMuteAsync(bool enabled)
         {
-            return mmSession.SendCommandAsync("app.player.mute = " + enabled.ToString().ToLower());
+            return Session.SendCommandAsync("app.player.mute = " + enabled.ToString().ToLower());
         }
 
         /// <summary>Sets the progress of the currently playing track.</summary>
@@ -119,20 +121,46 @@ namespace MediaMonkeyNet
         /// <summary>Enables or disables repeat mode.</summary>
         public Task SetRepeatAsync(bool enabled)
         {
-            return mmSession.SendCommandAsync("app.player.repeatPlaylist = " + enabled.ToString().ToLower());
+            return Session.SendCommandAsync("app.player.repeatPlaylist = " + enabled.ToString().ToLower());
         }
 
         /// <summary>Enables or disables shuffle.</summary>
         public Task SetShuffleAsync(bool enabled)
         {
-            return mmSession.SendCommandAsync("app.player.shufflePlaylist = " + enabled.ToString().ToLower());
+            return Session.SendCommandAsync("app.player.shufflePlaylist = " + enabled.ToString().ToLower());
+        }
+
+        /// <summary>Updates the state properties according the passed string.</summary>
+        public void SetPlayerState(string state)
+        {
+            switch (state)
+            {
+                case "play":
+                    IsPlaying = true;
+                    IsPaused = false;
+                    break;
+
+                case "unpause":
+                    IsPlaying = true;
+                    IsPaused = true;
+                    break;
+
+                case "stop":
+                    IsPlaying = false;
+                    IsPaused = false;
+                    break;
+
+                default:
+                    Console.WriteLine("Unknown:" + state);
+                    break;
+            }
         }
 
         /// <summary>Seek to the provided track position.</summary>
         /// <param name="position">Position of the track in milliseconds.</param>
         public Task SetTrackPositionAsync(long position)
         {
-            return mmSession.SendCommandAsync("app.player.seekMSAsync(" + position + ")");
+            return Session.SendCommandAsync("app.player.seekMSAsync(" + position + ")");
         }
 
         /// <summary>Sets the player volume.</summary>
@@ -145,25 +173,25 @@ namespace MediaMonkeyNet
                 NumberDecimalSeparator = "."
             };
 
-            return mmSession.SendCommandAsync("app.player.volume = " + volume.ToString(nfi));
+            return Session.SendCommandAsync("app.player.volume = " + volume.ToString(nfi));
         }
 
         /// <summary>Starts playback.</summary>
         public Task StartPlaybackAsync()
         {
-            return mmSession.SendCommandAsync("app.player.playAsync()");
+            return Session.SendCommandAsync("app.player.playAsync()");
         }
 
         /// <summary>Stops playback.</summary>
         public Task StopPlaybackAsync()
         {
-            return mmSession.SendCommandAsync("app.player.stopAsync()");
+            return Session.SendCommandAsync("app.player.stopAsync()");
         }
 
         /// <summary>Toggles play and pause status.</summary>
         public Task TogglePlaybackAsync()
         {
-            return mmSession.SendCommandAsync("app.player.playPauseAsync()");
+            return Session.SendCommandAsync("app.player.playPauseAsync()");
         }
 
     }
