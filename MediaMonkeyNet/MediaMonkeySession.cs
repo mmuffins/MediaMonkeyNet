@@ -148,12 +148,15 @@ namespace MediaMonkeyNet
             // Disable previous listeners to prevent getting duplicate notifications
             await DisableUpdates().ConfigureAwait(false);
 
-            await SendCommandAsync("app.listen(app.player,'repeatchange',e=>console.debug('repeat:'+e));" +
-                "app.listen(app.player,'shufflechange',e=>console.debug('shuffle:'+e));" +
-                "app.listen(app.player,'playbackState'," +
-                    "e=>{switch(e){case 'trackChanged':console.debug('trackChanged:');break;" +
-                    "case 'volumeChanged':console.debug('volume:'+app.player.volume);break;" +
-                    "default:console.debug('state:'+e)}});").ConfigureAwait(false);
+            await SendCommandAsync("var mmNetRepeatListen=e=>console.debug('repeat:'+e);" +
+                "var mmNetShuffleListen=e=>console.debug('shuffle:'+e);" +
+                "var mmNetStateListen=e=>{switch(e){" +
+                "case 'trackChanged':console.debug('trackChanged:');break;" +
+                "case 'volumeChanged':console.debug('volume:'+app.player.volume);break;" +
+                "default:console.debug('state:'+e)}};" +
+                "app.listen(app.player,'repeatchange',mmNetRepeatListen);" +
+                "app.listen(app.player,'shufflechange',mmNetShuffleListen);" +
+                "app.listen(app.player,'playbackState',mmNetStateListen);").ConfigureAwait(false);
 
             mmSession.Runtime.SubscribeToConsoleAPICalledEvent(OnPlayerStateChanged);
         }
@@ -161,6 +164,8 @@ namespace MediaMonkeyNet
         /// <summary>Disables event based updates for the player state and currently playing track.</summary>
         public Task DisableUpdates()
         {
+            mmSession.UnSubscribe<ConsoleAPICalledEvent>(OnPlayerStateChanged);
+
             return SendCommandAsync("if(typeof mmNetRepeatListen==='function'){app.unlisten(app.player,'repeatchange',mmNetRepeatListen)};" +
                 "if(typeof mmNetShuffleListen==='function'){app.unlisten(app.player,'shufflechange',mmNetShuffleListen)};" +
                 "if(typeof mmNetStateListen==='function'){app.unlisten(app.player,'playbackState',mmNetStateListen)};");

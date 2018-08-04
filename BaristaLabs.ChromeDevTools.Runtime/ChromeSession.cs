@@ -221,6 +221,29 @@ namespace BaristaLabs.ChromeDevTools.Runtime
                 });
         }
 
+        /// <summary>
+        /// Unubscribes to the event associated with the given type.
+        /// </summary>
+        /// <typeparam name="TEvent">Event to subscribe to</typeparam>
+        /// <param name="eventCallback"></param>
+        public void UnSubscribe<TEvent>(Action<TEvent> eventCallback)
+            where TEvent : IEvent
+        {
+            if (eventCallback == null)
+                throw new ArgumentNullException(nameof(eventCallback));
+
+            var eventName = m_eventTypeMap.GetOrAdd(
+                typeof(TEvent),
+                (type) =>
+                {
+                    if (!EventTypeMap.TryGetMethodNameForType<TEvent>(out string methodName))
+                        throw new InvalidOperationException($"Type {typeof(TEvent)} does not correspond to a known event type.");
+
+                    return methodName;
+                });
+            m_eventHandlers.TryRemove(eventName, out _);
+        }
+
         private async Task OpenSessionConnection(CancellationToken cancellationToken)
         {
             if (m_sessionSocket.State != WebSocketState.Open)
