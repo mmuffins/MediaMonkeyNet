@@ -1,4 +1,5 @@
-﻿using MediaMonkeyNet;
+﻿using BaristaLabs.ChromeDevTools.Runtime.Runtime;
+using MediaMonkeyNet;
 using System;
 using System.Threading.Tasks;
 
@@ -38,12 +39,33 @@ namespace Sample
                     mm.SetRatingAsync(80, mm.CurrentTrack).GetAwaiter();
 
                     // Using SendCommandAsync it's possible to execute generic javascript code
-                    BaristaLabs.ChromeDevTools.Runtime.Runtime.EvaluateCommandResponse currentSkin = await mm.SendCommandAsync("app.currentSkin();").ConfigureAwait(false);
+                    EvaluateCommandResponse currentSkin = await mm.SendCommandAsync("app.currentSkin();").ConfigureAwait(false);
 
                     if (currentSkin.Result != null)
                     {
                         Console.WriteLine("Current Skin: " + currentSkin.Result.Value.ToString());
                     }
+
+                    // Subscribe to an event
+                    var action = new Action<ConsoleAPICalledEvent>((ConsoleAPICalledEvent e) => {
+                        Console.WriteLine(e.Type + " event fired.");
+                    });
+
+                    await mm.Subscribe("app.player", "shufflechange", action).ConfigureAwait(false);
+
+                    // Enable automatic updates of the currently playing track and player state
+                    // Note that track position will not be automatically updated
+                    await mm.EnableUpdates().ConfigureAwait(false);
+
+                    //while (true)
+                    //{
+                    //    Console.WriteLine("Current Track:");
+                    //    Console.WriteLine("Title:" + mm.CurrentTrack.Title);
+                    //    Console.WriteLine("Artist:" + mm.CurrentTrack.Artist);
+                    //    Console.WriteLine("Rating:" + mm.CurrentTrack.Rating);
+                    //    Console.WriteLine("Is Playing:" + mm.Player.IsPlaying);
+                    //    System.Threading.Thread.Sleep(4000);
+                    //}
                 }
                 catch (Exception)
                 {

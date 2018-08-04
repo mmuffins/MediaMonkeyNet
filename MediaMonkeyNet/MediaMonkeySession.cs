@@ -120,40 +120,40 @@ namespace MediaMonkeyNet
             return SetRatingAsync(rating, track.ID);
         }
 
-        public async Task Subscribe(string eventName)
+        /// <summary>Subscribes to the provided event.</summary>
+        /// <param name="listener">Name of the object which receives a notification when the event occurs.</param>
+        /// <param name="eventType">Name of the event type to listen for.</param>
+        /// <param name="callback">Action to execute once the event is fired.</param>
+        public async Task Subscribe(string listener, string eventType, Action<ConsoleAPICalledEvent> callback)
         {
-            await mmSession.Runtime.Enable(new EnableCommand());
-            mmSession.Runtime.SubscribeToConsoleAPICalledEvent((e) =>
-            {
-                Console.WriteLine("consoleapicalled:");
-                Console.WriteLine("Type: " + e.Type);
-                Console.WriteLine("Type: " + e.Args.FirstOrDefault().Value);
-            });
+            await mmSession.Runtime.Enable(new EnableCommand()).ConfigureAwait(false);
+            await SendCommandAsync($"app.listen({listener},'{eventType}',console.debug)").ConfigureAwait(false);
 
-            //await SendCommandAsync("app.listen(app.player, 'playbackState', console.info)");
-            //repeatchange
-            //shufflechange
+            mmSession.Runtime.SubscribeToConsoleAPICalledEvent(callback);
         }
 
-        public Task UnsubScribe(string eventName)
+        /// <summary>Unsubscribes to the provided event.</summary>
+        /// <param name="listener">Name of the object which receives a notification when the event occurs.</param>
+        /// <param name="eventType">Name of the event type to listen for.</param>
+        public Task UnsubScribe(string listener, string eventType)
         {
-            return SendCommandAsync("app.unlisten(app.player)");
+            return SendCommandAsync($"app.unlisten({listener},'{eventType}',console.debug)");
         }
 
         /// <summary>Enables event based updates for the player state and currently playing track.</summary>
         public async Task EnableUpdates()
         {
-            await mmSession.Runtime.Enable(new EnableCommand());
+            await mmSession.Runtime.Enable(new EnableCommand()).ConfigureAwait(false);
 
             // Disable previous listeners to prevent getting duplicate notifications
-            await DisableUpdates();
+            await DisableUpdates().ConfigureAwait(false);
 
-            await SendCommandAsync("app.listen(app.player,'repeatchange',e=>console.info('repeat:'+e));" +
-                "app.listen(app.player,'shufflechange',e=>console.info('shuffle:'+e));" +
+            await SendCommandAsync("app.listen(app.player,'repeatchange',e=>console.debug('repeat:'+e));" +
+                "app.listen(app.player,'shufflechange',e=>console.debug('shuffle:'+e));" +
                 "app.listen(app.player,'playbackState'," +
-                    "e=>{switch(e){case 'trackChanged':console.info('trackChanged:');break;" +
-                    "case 'volumeChanged':console.info('volume:'+app.player.volume);break;" +
-                    "default:console.info('state:'+e)}});");
+                    "e=>{switch(e){case 'trackChanged':console.debug('trackChanged:');break;" +
+                    "case 'volumeChanged':console.debug('volume:'+app.player.volume);break;" +
+                    "default:console.debug('state:'+e)}});").ConfigureAwait(false);
 
             mmSession.Runtime.SubscribeToConsoleAPICalledEvent(OnPlayerStateChanged);
         }
@@ -169,8 +169,7 @@ namespace MediaMonkeyNet
         private void OnPlayerStateChanged(ConsoleAPICalledEvent e)
         {
 
-            throw new NotImplementedException();
-            if (e.Type != "info") return;
+            if (e.Type != "debug") return;
 
             var eventInfo = e.Args.FirstOrDefault().Value.ToString().Split(':');
             switch (eventInfo[0])
