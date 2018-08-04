@@ -145,10 +145,8 @@ namespace MediaMonkeyNet
         {
             await mmSession.Runtime.Enable(new EnableCommand());
 
-            // Disable previous listeners to prevent getting multiple notifications
-            await SendCommandAsync("app.unlisten(app.player,'repeatchange');" +
-                "app.unlisten(app.player,'shufflechange');" +
-                "app.unlisten(app.player,'playbackState'); ");
+            // Disable previous listeners to prevent getting duplicate notifications
+            await DisableUpdates();
 
             await SendCommandAsync("app.listen(app.player,'repeatchange',e=>console.info('repeat:'+e));" +
                 "app.listen(app.player,'shufflechange',e=>console.info('shuffle:'+e));" +
@@ -163,9 +161,9 @@ namespace MediaMonkeyNet
         /// <summary>Disables event based updates for the player state and currently playing track.</summary>
         public Task DisableUpdates()
         {
-            return SendCommandAsync("app.unlisten(app.player,'repeatchange');" +
-                "app.unlisten(app.player,'shufflechange');" +
-                "app.unlisten(app.player,'playbackState'); ");
+            return SendCommandAsync("if(typeof mmNetRepeatListen==='function'){app.unlisten(app.player,'repeatchange',mmNetRepeatListen)};" +
+                "if(typeof mmNetShuffleListen==='function'){app.unlisten(app.player,'shufflechange',mmNetShuffleListen)};" +
+                "if(typeof mmNetStateListen==='function'){app.unlisten(app.player,'playbackState',mmNetStateListen)};");
         }
 
         private void OnPlayerStateChanged(ConsoleAPICalledEvent e)
