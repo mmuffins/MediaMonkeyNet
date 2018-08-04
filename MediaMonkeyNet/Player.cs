@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,6 +7,13 @@ using System.Threading.Tasks;
 
 namespace MediaMonkeyNet
 {
+    public enum PlayerState
+    {
+        Stopped,
+        Playing,
+        Paused
+    }
+
     /// <summary>Represents the player state of MediaMonkey.</summary>  
     public class Player
     {
@@ -16,12 +24,10 @@ namespace MediaMonkeyNet
         public bool IsMuted { get; private set; }
 
         /// <summary>Gets a value indicating whether the player is paused.</summary>  
-        [JsonProperty]
-        public bool IsPaused { get; private set; }
+        public bool IsPaused => State == PlayerState.Paused;
 
         /// <summary>Gets a value indicating whether the player is playing.</summary>  
-        [JsonProperty]
-        public bool IsPlaying { get; private set; }
+        public bool IsPlaying => State != PlayerState.Stopped;
 
         /// <summary>Gets a value indicating whether the player is set to repeat.</summary>  
         [JsonProperty]
@@ -33,6 +39,9 @@ namespace MediaMonkeyNet
 
         /// <summary>Gets the <see cref="MediaMonkeySession"/> instance hosting the player.</summary>  
         public MediaMonkeySession Session { get; }
+
+        /// <summary>Gets a value indicating the player state.</summary>  
+        public PlayerState State { get; private set; }
 
         /// <summary>Gets the length of the currently playing track in milliseconds.</summary>  
         [JsonProperty]
@@ -47,10 +56,7 @@ namespace MediaMonkeyNet
         public double Volume { get; private set; }
 
         /// <summary>Gets the playback position of the currently playing track in percent.</summary>  
-        public double Progress
-        {
-            get => TrackLength == 0 ? 0.0 : (double)TrackPosition / TrackLength;
-        }
+        public double Progress => TrackLength == 0 ? 0.0 : (double)TrackPosition / TrackLength;
 
         /// <summary>Initializes a new instance of the <see cref="Player"/> class.</summary>  
         /// <param name="session">The <see cref="MediaMonkeySession"/> instance hosting the player.</param>
@@ -79,6 +85,23 @@ namespace MediaMonkeyNet
             var mmState = (await Session.SendCommandAsync(cmd).ConfigureAwait(false)).Result;
             if(mmState.Value != null)
             {
+                dynamic response = JToken.Parse(mmState.Value.ToString());
+                if (response["IsPlaying"] == true)
+                {
+                    if (response["IsPaused"] == true)
+                    {
+                        State = PlayerState.Paused;
+                    }
+                    else
+                    {
+                        State = PlayerState.Playing;
+                    }
+                }
+                else
+                {
+                    State = PlayerState.Stopped;
+                }
+
                 JsonConvert.PopulateObject(mmState.Value.ToString(), this);
             }
             playerRefreshInProgress = false;
@@ -136,18 +159,19 @@ namespace MediaMonkeyNet
             switch (state)
             {
                 case "play":
-                    IsPlaying = true;
-                    IsPaused = false;
+                    State = PlayerState.Playing;
+                    break;
+
+                case "pause":
+                    State = PlayerState.Paused;
                     break;
 
                 case "unpause":
-                    IsPlaying = true;
-                    IsPaused = true;
+                    State = PlayerState.Playing;
                     break;
 
                 case "stop":
-                    IsPlaying = false;
-                    IsPaused = false;
+                    State = PlayerState.Stopped;
                     break;
 
                 default:
