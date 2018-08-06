@@ -1,6 +1,5 @@
 namespace BaristaLabs.ChromeDevTools.Runtime
 {
-    using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using System;
@@ -17,7 +16,6 @@ namespace BaristaLabs.ChromeDevTools.Runtime
     public partial class ChromeSession : IDisposable
     {
         private readonly string m_endpointAddress;
-        private readonly ILogger<ChromeSession> m_logger;
         private readonly ConcurrentDictionary<string, ConcurrentBag<Action<object>>> m_eventHandlers = new ConcurrentDictionary<string, ConcurrentBag<Action<object>>>();
         private readonly ConcurrentDictionary<Type, string> m_eventTypeMap = new ConcurrentDictionary<Type, string>();
 
@@ -47,31 +45,22 @@ namespace BaristaLabs.ChromeDevTools.Runtime
 
 
         /// <summary>
-        /// Creates a new Chrome session to the specified WS endpoint without logging.
+        /// Creates a new Chrome session to the specified WS.
         /// </summary>
         /// <param name="endpointAddress"></param>
         public ChromeSession(string endpointAddress)
-            : this(null, endpointAddress)
-        {
-        }
-
-        /// <summary>
-        /// Creates a new ChromeSession to the specified WS endpoint with the specified logger implementation.
-        /// </summary>
-        /// <param name="logger"></param>
-        /// <param name="endpointAddress"></param>
-        public ChromeSession(ILogger<ChromeSession> logger, string endpointAddress)
-            : this()
+            :this()
         {
             if (String.IsNullOrWhiteSpace(endpointAddress))
                 throw new ArgumentNullException(nameof(endpointAddress));
 
             CommandTimeout = 5000;
-            m_logger = logger;
+            //m_logger = logger;
             m_endpointAddress = endpointAddress;
 
             m_messageQueue = new ActionBlock<string>((Action<string>)ProcessIncomingMessage,
-                new ExecutionDataflowBlockOptions {
+                new ExecutionDataflowBlockOptions
+                {
                     EnsureOrdered = true,
                     MaxDegreeOfParallelism = 1,
                 });
@@ -312,19 +301,20 @@ namespace BaristaLabs.ChromeDevTools.Runtime
 
         private void LogTrace(string message, params object[] args)
         {
-            if (m_logger == null)
-                return;
+            //if (m_logger == null)
+            //    return;
 
-            m_logger.LogTrace(message, args);
+            //m_logger.LogTrace(message, args);
         }
 
         private void LogError(string message, params object[] args)
         {
-            if (m_logger == null)
-                return;
+            //if (m_logger == null)
+            //    return;
 
-            m_logger.LogError(message, args);
+            //m_logger.LogError(message, args);
         }
+
 
 
         #region EventHandlers
