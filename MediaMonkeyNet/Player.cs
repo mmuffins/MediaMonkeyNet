@@ -1,7 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using BaristaLabs.ChromeDevTools.Runtime;
+using BaristaLabs.ChromeDevTools.Runtime.Runtime;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -65,6 +68,18 @@ namespace MediaMonkeyNet
             Session = session;
         }
 
+        /// <summary>Enables event based updates for the player state.</summary>
+        public void EnableUpdates(ChromeSession session)
+        {
+            session.Runtime.SubscribeToConsoleAPICalledEvent(OnPlayerStateChanged);
+        }
+
+        /// <summary>Disables event based updates for the player state.</summary>
+        public void DisableUpdates(ChromeSession session)
+        {
+            session.UnSubscribe<ConsoleAPICalledEvent>(OnPlayerStateChanged);
+        }
+
         /// <summary>Refreshes state information of the player.</summary>
         public async Task RefreshAsync()
         {
@@ -111,6 +126,32 @@ namespace MediaMonkeyNet
         public Task NextTrackAsync()
         {
             return Session.SendCommandAsync("app.player.nextAsync()");
+        }
+
+        private void OnPlayerStateChanged(ConsoleAPICalledEvent e)
+        {
+
+            if (e.Type != "debug") return;
+
+            var eventInfo = e.Args.FirstOrDefault().Value.ToString().Split(':');
+            switch (eventInfo[0])
+            {
+                case "state":
+                    SetPlayerState(eventInfo[1]);
+                    break;
+
+                case "volumeChanged":
+                    Volume = int.Parse(eventInfo[1]);
+                    break;
+
+                case "repeatchange":
+                    IsRepeat = bool.Parse(eventInfo[1]);
+                    break;
+
+                case "shufflechange":
+                    IsShuffle = bool.Parse(eventInfo[1]);
+                    break;
+            }
         }
 
         /// <summary>Pauses Playback.</summary>

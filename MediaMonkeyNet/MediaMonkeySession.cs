@@ -159,12 +159,14 @@ namespace MediaMonkeyNet
                 "app.listen(app.player,'playbackState',mmNetStateListen);").ConfigureAwait(false);
 
             mmSession.Runtime.SubscribeToConsoleAPICalledEvent(OnPlayerStateChanged);
+            Player.EnableUpdates(mmSession);
         }
 
         /// <summary>Disables event based updates for the player state and currently playing track.</summary>
         public Task DisableUpdates()
         {
             mmSession.UnSubscribe<ConsoleAPICalledEvent>(OnPlayerStateChanged);
+            Player.DisableUpdates(mmSession);
 
             return SendCommandAsync("if(typeof mmNetRepeatListen==='function'){app.unlisten(app.player,'repeatchange',mmNetRepeatListen)};" +
                 "if(typeof mmNetShuffleListen==='function'){app.unlisten(app.player,'shufflechange',mmNetShuffleListen)};" +
@@ -179,21 +181,12 @@ namespace MediaMonkeyNet
             var eventInfo = e.Args.FirstOrDefault().Value.ToString().Split(':');
             switch (eventInfo[0])
             {
-                case "state":
-                    Player.SetPlayerState(eventInfo[1]);
-                    break;
+                //case "state":
+                //    Player.SetPlayerState(eventInfo[1]);
+                //    break;
 
                 case "trackChanged":
                     RefreshCurrentTrackAsync().GetAwaiter();
-                    break;
-
-                case "volumeChanged":
-                    break;
-
-                case "repeatchange":
-                    break;
-
-                case "shufflechange":
                     break;
             }
         }
