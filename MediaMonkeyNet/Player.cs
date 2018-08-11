@@ -27,10 +27,12 @@ namespace MediaMonkeyNet
         public bool IsMuted { get; private set; }
 
         /// <summary>Gets a value indicating whether the player is paused.</summary>  
-        public bool IsPaused => State == PlayerState.Paused;
+        [JsonProperty]
+        public bool IsPaused { get; private set; }
 
         /// <summary>Gets a value indicating whether the player is playing.</summary>  
-        public bool IsPlaying => State != PlayerState.Stopped;
+        [JsonProperty]
+        public bool IsPlaying { get; private set; }
 
         /// <summary>Gets a value indicating whether the player is set to repeat.</summary>  
         [JsonProperty]
@@ -100,10 +102,10 @@ namespace MediaMonkeyNet
             var mmState = (await Session.SendCommandAsync(cmd).ConfigureAwait(false)).Result;
             if(mmState.Value != null)
             {
-                dynamic response = JToken.Parse(mmState.Value.ToString());
-                if (response["IsPlaying"] == true)
+                JsonConvert.PopulateObject(mmState.Value.ToString(), this);
+                if (IsPlaying == true)
                 {
-                    if (response["IsPaused"] == true)
+                    if (IsPaused == true)
                     {
                         State = PlayerState.Paused;
                     }
@@ -117,7 +119,6 @@ namespace MediaMonkeyNet
                     State = PlayerState.Stopped;
                 }
 
-                JsonConvert.PopulateObject(mmState.Value.ToString(), this);
             }
             playerRefreshInProgress = false;
         }
@@ -140,15 +141,15 @@ namespace MediaMonkeyNet
                     SetPlayerState(eventInfo[1]);
                     break;
 
-                case "volumeChanged":
-                    Volume = int.Parse(eventInfo[1]);
+                case "volume":
+                    Volume = Double.Parse(eventInfo[1]);
                     break;
 
-                case "repeatchange":
+                case "repeat":
                     IsRepeat = bool.Parse(eventInfo[1]);
                     break;
 
-                case "shufflechange":
+                case "shuffle":
                     IsShuffle = bool.Parse(eventInfo[1]);
                     break;
             }
@@ -197,19 +198,22 @@ namespace MediaMonkeyNet
             switch (state)
             {
                 case "play":
+                case "unpause":
                     State = PlayerState.Playing;
+                    IsPlaying = true;
+                    IsPaused = false;
                     break;
 
                 case "pause":
                     State = PlayerState.Paused;
-                    break;
-
-                case "unpause":
-                    State = PlayerState.Playing;
+                    IsPlaying = true;
+                    IsPaused = true;
                     break;
 
                 case "stop":
                     State = PlayerState.Stopped;
+                    IsPlaying = false;
+                    IsPaused = false;
                     break;
 
                 default:
