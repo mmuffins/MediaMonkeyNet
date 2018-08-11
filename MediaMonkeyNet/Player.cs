@@ -176,9 +176,6 @@ namespace MediaMonkeyNet
         /// <param name="progress">Progress of as decimal value between 0 and 1.</param>
         public Task SetProgressAsync(double progress)
         {
-            if (progress < 0) { progress = 0; }
-            if (progress > 1) { progress = 1; }
-
             return SetTrackPositionAsync((long)(TrackLength * progress));
         }
 

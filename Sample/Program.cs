@@ -33,10 +33,10 @@ namespace Sample
                     Console.WriteLine("Rating:" + mm.CurrentTrack.Rating);
 
                     // Start playback
-                    mm.Player.StartPlaybackAsync().GetAwaiter();
+                    //mm.Player.StartPlaybackAsync().GetAwaiter();
 
                     // Update the rating of the currently playing track
-                    mm.SetRatingAsync(80, mm.CurrentTrack).GetAwaiter();
+                    //mm.SetRatingAsync(80, mm.CurrentTrack).GetAwaiter();
 
                     // Using SendCommandAsync it's possible to execute generic javascript code
                     EvaluateCommandResponse currentSkin = await mm.SendCommandAsync("app.currentSkin();").ConfigureAwait(false);
@@ -51,21 +51,21 @@ namespace Sample
                         Console.WriteLine(e.Type + " event fired.");
                     });
 
-                    await mm.Subscribe("app.player", "shufflechange", action).ConfigureAwait(false);
+                    //await mm.Subscribe("app.player", "shufflechange", action).ConfigureAwait(false);
 
                     // Enable automatic updates of the currently playing track and player state
                     // Note that track position will not be automatically updated
                     await mm.EnableUpdates().ConfigureAwait(false);
 
-                    //while (true)
-                    //{
-                    //    Console.WriteLine("Current Track:");
-                    //    Console.WriteLine("Title:" + mm.CurrentTrack.Title);
-                    //    Console.WriteLine("Artist:" + mm.CurrentTrack.Artist);
-                    //    Console.WriteLine("Rating:" + mm.CurrentTrack.Rating);
-                    //    Console.WriteLine("Is Playing:" + mm.Player.IsPlaying);
-                    //    System.Threading.Thread.Sleep(4000);
-                    //}
+                    while (true)
+                    {
+                        Console.WriteLine("Current Track:");
+                        Console.WriteLine("Title:" + mm.CurrentTrack.Title);
+                        Console.WriteLine("Artist:" + mm.CurrentTrack.Artist);
+                        Console.WriteLine("Rating:" + mm.CurrentTrack.Rating);
+                        Console.WriteLine("Is Playing:" + mm.Player.IsPlaying);
+                        System.Threading.Thread.Sleep(4000);
+                    }
                 }
                 catch (Exception)
                 {
