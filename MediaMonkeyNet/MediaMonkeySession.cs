@@ -105,7 +105,7 @@ namespace MediaMonkeyNet
         /// <summary>Sets Rating of the track with the provided ID.</summary>
         /// <param name="rating">Rating of the track between 0 and 100.</param>
         /// <param name="ID">SongID property of the track.</param>
-        private Task SetRatingAsync(int rating, int ID)
+        public Task SetRatingAsync(int rating, int ID)
         {
             return SendCommandAsync("app.getObject('track', { id:" + ID
                 + "}).then(function(track){ if (track) {track.rating ="
@@ -115,7 +115,7 @@ namespace MediaMonkeyNet
         /// <summary>Sets Rating of the provided track.</summary>
         /// <param name="rating">Rating of the track between 0 and 100.</param>
         /// <param name="track">Track object of the track.</param>
-        private Task SetRatingAsync(int rating, Track track)
+        public Task SetRatingAsync(int rating, Track track)
         {
             return SetRatingAsync(rating, track.ID);
         }
