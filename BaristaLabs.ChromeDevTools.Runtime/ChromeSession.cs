@@ -150,7 +150,7 @@ namespace BaristaLabs.ChromeDevTools.Runtime
             await OpenSessionConnection(cancellationToken);
 
             LogTrace("Sending {id} {method}: {params}", message.id, message.method, @params.ToString());
-            
+
             var contents = JsonConvert.SerializeObject(message);
 
             m_responseReceived.Reset();

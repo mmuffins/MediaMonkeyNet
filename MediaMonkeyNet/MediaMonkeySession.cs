@@ -52,7 +52,7 @@ namespace MediaMonkeyNet
             using (var webClient = new HttpClient())
             {
                 webClient.BaseAddress = new Uri(RemoteDebuggingUri);
-                var remoteSessions = await webClient.GetStringAsync("/json").ConfigureAwait(false);
+                string remoteSessions = await webClient.GetStringAsync("/json").ConfigureAwait(false);
                 var webSockets =  JsonConvert.DeserializeObject<ICollection<ChromeSessionInfo>>(remoteSessions);
                 EndpointAddress = (webSockets.First(s => s.Url == mmWebsocketUrl)).WebSocketDebuggerUrl.Replace("ws://localhost", "ws://127.0.0.1");
                 mmSession = new ChromeSession(EndpointAddress);
@@ -96,7 +96,7 @@ namespace MediaMonkeyNet
             if (currentTrackRefreshInProgress) { return; }
 
             currentTrackRefreshInProgress = true;
-            var track = (await SendCommandAsync("app.player.getCurrentTrack()").ConfigureAwait(false)).Result;
+            RemoteObject track = (await SendCommandAsync("app.player.getCurrentTrack()").ConfigureAwait(false)).Result;
 
             CurrentTrack = new Track(track, this);
             currentTrackRefreshInProgress = false;
@@ -162,9 +162,10 @@ namespace MediaMonkeyNet
             Player.EnableUpdates(mmSession);
         }
 
-        /// <summary>Disables event based updates for the player state and currently playing track.</summary>
+        /// <summary>Disables event based updates for the player state and currently playing track.</seummary>
         public Task DisableUpdates()
         {
+            //mmSession.Runtime.Disable(new Disable()).ConfigureAwait(false);
             mmSession.UnSubscribe<ConsoleAPICalledEvent>(OnPlayerStateChanged);
             Player.DisableUpdates(mmSession);
 
@@ -178,7 +179,7 @@ namespace MediaMonkeyNet
 
             if (e.Type != "debug") return;
 
-            var eventInfo = e.Args.FirstOrDefault().Value.ToString().Split(':');
+            string[] eventInfo = e.Args.FirstOrDefault().Value.ToString().Split(':');
             switch (eventInfo[0])
             {
                 //case "state":
@@ -207,6 +208,7 @@ namespace MediaMonkeyNet
                 if(mmSession != null)
                 {
                     mmSession.Dispose();
+                    mmSession = null;
                 }
                 disposedValue = true;
             }
