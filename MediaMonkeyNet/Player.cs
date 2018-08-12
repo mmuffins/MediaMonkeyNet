@@ -23,8 +23,7 @@ namespace MediaMonkeyNet
         private bool playerRefreshInProgress;
 
         /// <summary>Gets a value indicating whether the player is muted.</summary>  
-        [JsonProperty]
-        public bool IsMuted { get; private set; }
+        public bool IsMuted => Volume == 0;
 
         /// <summary>Gets a value indicating whether the player is paused.</summary>  
         [JsonProperty]
@@ -89,15 +88,14 @@ namespace MediaMonkeyNet
             if (playerRefreshInProgress) { return; }
 
             playerRefreshInProgress = true;
-            string cmd = "var playerState={'IsMuted':app.player.mute," +
+            string cmd = "{'IsMuted':app.player.mute," +
                 "'IsPaused':app.player.paused," +
                 "'IsPlaying':app.player.isPlaying," +
                 "'IsRepeat':app.player.repeatPlaylist," +
                 "'IsShuffle':app.player.shufflePlaylist," +
                 "'TrackLength':app.player.trackLengthMS," +
                 "'TrackPosition':app.player.trackPositionMS," +
-                "'Volume':app.player.volume};" +
-                "playerState";
+                "'Volume':app.player.volume};";
 
             var mmState = (await Session.SendCommandAsync(cmd).ConfigureAwait(false)).Result;
             if(mmState.Value != null)
@@ -119,6 +117,24 @@ namespace MediaMonkeyNet
                     State = PlayerState.Stopped;
                 }
 
+            }
+            playerRefreshInProgress = false;
+        }
+
+        /// <summary>Refreshes track length and position of the currently playing track.</summary>
+        public async Task RefreshTrackPositionAsync()
+        {
+            // Prevent concurrent calls
+            if (playerRefreshInProgress) { return; }
+
+            playerRefreshInProgress = true;
+            string cmd = "{'TrackLength':app.player.trackLengthMS," +
+                "'TrackPosition':app.player.trackPositionMS};";
+
+            var mmState = (await Session.SendCommandAsync(cmd).ConfigureAwait(false)).Result;
+            if (mmState.Value != null)
+            {
+                JsonConvert.PopulateObject(mmState.Value.ToString(), this);
             }
             playerRefreshInProgress = false;
         }
@@ -167,10 +183,10 @@ namespace MediaMonkeyNet
             return Session.SendCommandAsync("app.player.prevAsync()");
         }
 
-        /// <summary>Enables or disables mute.</summary>
-        public Task SetMuteAsync(bool enabled)
+        /// <summary>Mutes player.</summary>
+        public Task SetMuteAsync()
         {
-            return Session.SendCommandAsync("app.player.mute = " + enabled.ToString().ToLower());
+            return SetVolumeAsync(0);
         }
 
         /// <summary>Sets the progress of the currently playing track.</summary>
