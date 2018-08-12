@@ -326,5 +326,12 @@ namespace MediaMonkeyNet
 
             JsonConvert.PopulateObject(remoteObject.Value.ToString(), this, serializerSettings);
         }
+
+        /// <summary>Sets Rating of the track.</summary>
+        /// <param name="rating">Rating of the track between 0 and 100.</param>
+        public Task SetRatingAsync(int rating)
+        {
+            return Session.SetRatingAsync(rating, this);
+        }
     }
 }
