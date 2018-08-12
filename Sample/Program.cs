@@ -36,7 +36,7 @@ namespace Sample
                     //mm.Player.StartPlaybackAsync().GetAwaiter();
 
                     // Update the rating of the currently playing track
-                    //mm.SetRatingAsync(80, mm.CurrentTrack).GetAwaiter();
+                    //mm.CurrentTrack.SetRatingAsync(80).GetAwaiter();
 
                     // Using SendCommandAsync it's possible to execute generic javascript code
                     EvaluateCommandResponse currentSkin = await mm.SendCommandAsync("app.currentSkin();").ConfigureAwait(false);
@@ -54,16 +54,20 @@ namespace Sample
                     //await mm.Subscribe("app.player", "shufflechange", action).ConfigureAwait(false);
 
                     // Enable automatic updates of the currently playing track and player state
-                    // Note that track position will not be automatically updated
                     await mm.EnableUpdates().ConfigureAwait(false);
 
                     while (true)
                     {
+                        // Track position and length are not automatically updated, they
+                        // need to be refreshed manually
+                        await mm.Player.RefreshTrackPositionAsync().ConfigureAwait(false);
                         Console.WriteLine("Current Track:");
                         Console.WriteLine("Title:" + mm.CurrentTrack.Title);
                         Console.WriteLine("Artist:" + mm.CurrentTrack.Artist);
                         Console.WriteLine("Rating:" + mm.CurrentTrack.Rating);
-                        Console.WriteLine("Is Playing:" + mm.Player.IsPlaying);
+                        Console.WriteLine("Volume:" + mm.Player.Volume);
+                        Console.WriteLine("State:" + mm.Player.State.ToString());
+                        Console.WriteLine("Progress:" + mm.Player.Progress);
                         System.Threading.Thread.Sleep(4000);
                     }
                 }
