@@ -88,14 +88,15 @@ namespace MediaMonkeyNet
             if (playerRefreshInProgress) { return; }
 
             playerRefreshInProgress = true;
-            string cmd = "{'IsMuted':app.player.mute," +
+            string cmd = "var mmnetPlayerState={'IsMuted':app.player.mute," +
                 "'IsPaused':app.player.paused," +
                 "'IsPlaying':app.player.isPlaying," +
                 "'IsRepeat':app.player.repeatPlaylist," +
                 "'IsShuffle':app.player.shufflePlaylist," +
                 "'TrackLength':app.player.trackLengthMS," +
                 "'TrackPosition':app.player.trackPositionMS," +
-                "'Volume':app.player.volume};";
+                "'Volume':app.player.volume};" +
+                "mmnetPlayerState";
 
             var mmState = (await Session.SendCommandAsync(cmd).ConfigureAwait(false)).Result;
             if(mmState.Value != null)
@@ -128,8 +129,9 @@ namespace MediaMonkeyNet
             if (playerRefreshInProgress) { return; }
 
             playerRefreshInProgress = true;
-            string cmd = "{'TrackLength':app.player.trackLengthMS," +
-                "'TrackPosition':app.player.trackPositionMS};";
+            string cmd = "var mmnetTrackProgress={'TrackLength':app.player.trackLengthMS," +
+                "'TrackPosition':app.player.trackPositionMS};" +
+                "mmnetTrackProgress";
 
             var mmState = (await Session.SendCommandAsync(cmd).ConfigureAwait(false)).Result;
             if (mmState.Value != null)
