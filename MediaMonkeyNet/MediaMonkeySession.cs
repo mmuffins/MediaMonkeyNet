@@ -174,6 +174,12 @@ namespace MediaMonkeyNet
                 "if(typeof mmNetStateListen==='function'){app.unlisten(app.player,'playbackState',mmNetStateListen)};");
         }
 
+        /// <summary>Attempts to close the player.</summary>
+        public Task ClosePlayer()
+        {
+            return SendCommandAsync("app.closeApp()");
+        }
+
         private void OnPlayerStateChanged(ConsoleAPICalledEvent e)
         {
 
@@ -191,6 +197,7 @@ namespace MediaMonkeyNet
                     break;
             }
         }
+
 
 
         #region IDisposable Support
