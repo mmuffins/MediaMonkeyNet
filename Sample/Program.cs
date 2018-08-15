@@ -32,11 +32,14 @@ namespace Sample
                     Console.WriteLine("Artist:" + mm.CurrentTrack.Artist);
                     Console.WriteLine("Rating:" + mm.CurrentTrack.Rating);
 
+                    // Load album art for the current track
+                    await mm.CurrentTrack.LoadAlbumArt();
+
                     // Start playback
-                    //mm.Player.StartPlaybackAsync().GetAwaiter();
+                    mm.Player.StartPlaybackAsync().GetAwaiter();
 
                     // Update the rating of the currently playing track
-                    //mm.CurrentTrack.SetRatingAsync(80).GetAwaiter();
+                    mm.CurrentTrack.SetRatingAsync(80).GetAwaiter();
 
                     // Using SendCommandAsync it's possible to execute generic javascript code
                     EvaluateCommandResponse currentSkin = await mm.SendCommandAsync("app.currentSkin();").ConfigureAwait(false);
@@ -51,7 +54,7 @@ namespace Sample
                         Console.WriteLine(e.Type + " event fired.");
                     });
 
-                    //await mm.Subscribe("app.player", "shufflechange", action).ConfigureAwait(false);
+                    await mm.Subscribe("app.player", "shufflechange", action).ConfigureAwait(false);
 
                     // Enable automatic updates of the currently playing track and player state
                     await mm.EnableUpdates().ConfigureAwait(false);
