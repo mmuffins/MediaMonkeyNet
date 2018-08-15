@@ -1,6 +1,7 @@
 ﻿using BaristaLabs.ChromeDevTools.Runtime.Runtime;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -342,27 +343,25 @@ namespace MediaMonkeyNet
         /// <summary>Loads the album art list of the track.</summary>
         public async Task LoadAlbumArt()
         {
-            var response = await Session.SendCommandAsync("new Promise((resolve) => {" +
+            var response = (await Session.SendCommandAsync("new Promise((resolve) => {" +
                 "app.getObject('track', { id:" + ID + "})" +
                 ".then(function(track){if (track) {" +
                 "var cover = track.loadCoverListAsync();" +
                 "var loadedPromise = cover.whenLoaded();" +
                 "loadedPromise.then(x => resolve(cover.asJSON));" +
-                "}});});");
+                "}});});").ConfigureAwait(false)).Result;
 
-            if (response != null)
+            if (response.Value is null) return;
+
+            try
             {
-                var coverString = response.Result.Value;
-                //JObject parsed = JObject.Parse(Jsonstr);
-
-
-                // workaround for invalid json in mm alpha rev 2116
-                //var trackJson = trackString.Replace("tempString\":\"\"\"extendedTags", "tempString\":\"\",\"extendedTags");
-                //JsonConvert.DeserializeObject()
-                //JsonConvert.PopulateObject(trackObject.Value.ToString(), this, serializerSettings);
+                JObject parsedJson = JObject.Parse(response.Value.ToString());
+                CoverList = JsonConvert.DeserializeObject<List<Cover>>(parsedJson["data"].ToString());
             }
-
-            Console.WriteLine(response);
+            catch (Exception)
+            {
+                CoverList = null;
+            }
         }
     }
 }
