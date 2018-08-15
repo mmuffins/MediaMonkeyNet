@@ -89,41 +89,6 @@ namespace MediaMonkeyNet
         }
 
 
-        //public async Task<EvaluateCommandResponse> SendCommandAsync2(string command)
-        //{
-        //    if (string.IsNullOrWhiteSpace(command))
-        //    {
-        //        throw new ArgumentNullException(nameof(command));
-        //    }
-
-        //    if (mmSession is null)
-        //    {
-        //        throw new NullReferenceException("No active MediaMonkey session found.");
-        //    }
-
-        //    //string cmdstr = "var mmNetTrack = app.player.getCurrentTrack();var mmnetCover = mmNetTrack.loadCoverListAsync();var loadedPromise = mmnetCover.whenLoaded();new Promise((resolve) => {loadedPromise.then(x => resolve(mmnetCover.asJSON));});";
-        //    //string cmdstr = "new Promise((resolve) => {var mmNetTrack = app.player.getCurrentTrack();var mmnetCover = mmNetTrack.loadCoverListAsync();var loadedPromise = mmnetCover.whenLoaded();loadedPromise.then(x => resolve(mmnetCover.asJSON));});";
-        //    var cmdstr = "new Promise((resolve) => {app.getObject('track', { id:4246}).then(function(track){ if (track) {var cover = track.loadCoverListAsync();var loadedPromise = cover.whenLoaded();loadedPromise.then(x => resolve(cover.asJSON));}});});";
-        //    var cmd = new EvaluateCommand()
-        //    {
-        //        AwaitPromise = true,
-        //        Expression = cmdstr
-        //    };
-
-        //    try
-        //    {
-        //        var res = await mmSession.SendCommand(cmd).ConfigureAwait(false) as EvaluateCommandResponse;
-        //        Console.WriteLine(res);
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine(ex.Message);
-        //    }
-
-        //    return null;
-        //}
-
         /// <summary>
         /// Refreshes the currently playing track.</summary>
         public async Task RefreshCurrentTrackAsync()
