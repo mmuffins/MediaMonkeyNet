@@ -59,6 +59,9 @@ namespace Sample
                     // Enable automatic updates of the currently playing track and player state
                     await mm.EnableUpdates().ConfigureAwait(false);
 
+                    // Also load album art when loading a new track
+                    mm.LoadAlbumArt = true;
+
                     while (true)
                     {
                         // Track position and length are not automatically updated, they

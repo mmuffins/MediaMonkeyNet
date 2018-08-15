@@ -33,6 +33,9 @@ namespace MediaMonkeyNet
         /// <summary>Gets the currently playing track.</summary>  
         public Track CurrentTrack { get; private set; }
 
+        /// <summary>Sets or gets a value indicating weather album art should be loaded when refreshing the currently playing track.</summary>  
+        public bool LoadAlbumArt { get; set; }
+
         /// <summary>Initializes a new instance of the <see cref="MediaMonkeySession"/> class.</summary>  
         public MediaMonkeySession() : this(defaultConnectionAddress, defaultConnectionPort) { }
 
@@ -88,7 +91,6 @@ namespace MediaMonkeyNet
             return await mmSession.SendCommand(cmd).ConfigureAwait(false) as EvaluateCommandResponse;
         }
 
-
         /// <summary>
         /// Refreshes the currently playing track.</summary>
         public async Task RefreshCurrentTrackAsync()
@@ -100,6 +102,11 @@ namespace MediaMonkeyNet
             RemoteObject track = (await SendCommandAsync("app.player.getCurrentTrack()").ConfigureAwait(false)).Result;
 
             CurrentTrack = new Track(track, this);
+            if (CurrentTrack != null && LoadAlbumArt)
+            {
+                await CurrentTrack.LoadAlbumArt();
+            }
+
             currentTrackRefreshInProgress = false;
         }
 
