@@ -343,20 +343,31 @@ namespace MediaMonkeyNet
         /// <summary>Loads the album art list of the track.</summary>
         public async Task LoadAlbumArt()
         {
-            var response = (await Session.SendCommandAsync("new Promise((resolve) => {" +
-                "app.getObject('track', { id:" + ID + "})" +
-                ".then(function(track){if (track) {" +
+            //var cmdString = "new Promise((resolve) => {" +
+            //    "app.getObject('track', { id:" + ID + "})" +
+            //    ".then(function(track){if (track) {" +
+            //    "var cover = track.loadCoverListAsync();" +
+            //    "var loadedPromise = cover.whenLoaded();" +
+            //    "loadedPromise.then(x => resolve(cover.asJSON));" +
+            //    "}});});";
+
+            var cmdString = "new Promise((resolve) => {app.getObject('track', { id:" + ID + "})" +
+                ".then(function(track){ if (track) {" +
                 "var cover = track.loadCoverListAsync();" +
                 "var loadedPromise = cover.whenLoaded();" +
-                "loadedPromise.then(x => resolve(cover.asJSON));" +
-                "}});});").ConfigureAwait(false)).Result;
+                "loadedPromise.then(x =>{ cList=[];" +
+                "cover.forEach(cvr=>{var cvrPath=cvr.picturePath;" +
+                "if(cvr.coverStorage==0){cvrPath=cvr.getThumb(500,500)};" +
+                "cList.push({coverTypeDesc:cvr.coverTypeDesc,persistentID:cvr.persistentID,pictureType:cvr.pictureType,coverStorage:cvr.coverStorage,description:cvr.description,picturePath:cvrPath})});" +
+                "resolve(cList)})}})})";
+
+            RemoteObject response = (await Session.SendCommandAsync(cmdString).ConfigureAwait(false)).Result;
 
             if (response.Value is null) return;
 
             try
             {
-                JObject parsedJson = JObject.Parse(response.Value.ToString());
-                CoverList = JsonConvert.DeserializeObject<List<Cover>>(parsedJson["data"].ToString());
+                CoverList = JsonConvert.DeserializeObject<List<Cover>>(response.Value.ToString());
             }
             catch (Exception)
             {
