@@ -41,6 +41,8 @@ namespace MediaMonkeyNet
         [JsonProperty]
         public string Copyright { get; private set; }
 
+        public List<Cover> CoverList { get; private set; }
+
         [JsonProperty]
         public string Custom1 { get; private set; }
 
@@ -304,34 +306,63 @@ namespace MediaMonkeyNet
         }
 
         /// <summary>Initializes a new instance of the <see cref="Track"/> class from a ChromeDevTools RemoteObject.</summary>
-        /// <param name="remoteObject">The RemoteObject instance to deserialize.</param>
+        /// <param name="trackObject">The RemoteObject instance to deserialize.</param>
         /// <param name="session">The <see cref="MediaMonkeySession"/> instance hosting the track.</param>
-        public Track(RemoteObject remoteObject, MediaMonkeySession session) : this(session)
+        public Track(RemoteObject trackObject, MediaMonkeySession session) : this(session)
         {
-            if(remoteObject.Value is null) { return; }
+            if(trackObject.Value is null) { return; }
 
             var serializerSettings = new JsonSerializerSettings
             {
                 MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
+                NullValueHandling = NullValueHandling.Ignore,
                 DateParseHandling = DateParseHandling.None,
                 Converters = {
                         new IsoDateTimeConverter { DateTimeStyles = System.Globalization.DateTimeStyles.AssumeUniversal }
                 },
             };
 
-            var trackString = remoteObject.Value.ToString();
+            var trackString = trackObject.Value.ToString();
 
             // workaround for invalid json in mm alpha rev 2116
             var trackJson = trackString.Replace("tempString\":\"\"\"extendedTags", "tempString\":\"\",\"extendedTags");
 
-            JsonConvert.PopulateObject(remoteObject.Value.ToString(), this, serializerSettings);
+            JsonConvert.PopulateObject(trackObject.Value.ToString(), this, serializerSettings);
         }
 
         /// <summary>Sets Rating of the track.</summary>
         /// <param name="rating">Rating of the track between 0 and 100.</param>
         public Task SetRatingAsync(int rating)
         {
-            return Session.SetRatingAsync(rating, this);
+            return Session.SendCommandAsync("app.getObject('track', { id:" + ID
+                + "}).then(function(track){ if (track) {track.rating ="
+                + rating + "; track.commitAsync();}});");
+        }
+
+        /// <summary>Loads the album art list of the track.</summary>
+        public async Task LoadAlbumArt()
+        {
+            var response = await Session.SendCommandAsync("new Promise((resolve) => {" +
+                "app.getObject('track', { id:" + ID + "})" +
+                ".then(function(track){if (track) {" +
+                "var cover = track.loadCoverListAsync();" +
+                "var loadedPromise = cover.whenLoaded();" +
+                "loadedPromise.then(x => resolve(cover.asJSON));" +
+                "}});});");
+
+            if (response != null)
+            {
+                var coverString = response.Result.Value;
+                //JObject parsed = JObject.Parse(Jsonstr);
+
+
+                // workaround for invalid json in mm alpha rev 2116
+                //var trackJson = trackString.Replace("tempString\":\"\"\"extendedTags", "tempString\":\"\",\"extendedTags");
+                //JsonConvert.DeserializeObject()
+                //JsonConvert.PopulateObject(trackObject.Value.ToString(), this, serializerSettings);
+            }
+
+            Console.WriteLine(response);
         }
     }
 }

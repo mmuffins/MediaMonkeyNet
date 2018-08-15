@@ -88,6 +88,42 @@ namespace MediaMonkeyNet
             return await mmSession.SendCommand(cmd).ConfigureAwait(false) as EvaluateCommandResponse;
         }
 
+
+        //public async Task<EvaluateCommandResponse> SendCommandAsync2(string command)
+        //{
+        //    if (string.IsNullOrWhiteSpace(command))
+        //    {
+        //        throw new ArgumentNullException(nameof(command));
+        //    }
+
+        //    if (mmSession is null)
+        //    {
+        //        throw new NullReferenceException("No active MediaMonkey session found.");
+        //    }
+
+        //    //string cmdstr = "var mmNetTrack = app.player.getCurrentTrack();var mmnetCover = mmNetTrack.loadCoverListAsync();var loadedPromise = mmnetCover.whenLoaded();new Promise((resolve) => {loadedPromise.then(x => resolve(mmnetCover.asJSON));});";
+        //    //string cmdstr = "new Promise((resolve) => {var mmNetTrack = app.player.getCurrentTrack();var mmnetCover = mmNetTrack.loadCoverListAsync();var loadedPromise = mmnetCover.whenLoaded();loadedPromise.then(x => resolve(mmnetCover.asJSON));});";
+        //    var cmdstr = "new Promise((resolve) => {app.getObject('track', { id:4246}).then(function(track){ if (track) {var cover = track.loadCoverListAsync();var loadedPromise = cover.whenLoaded();loadedPromise.then(x => resolve(cover.asJSON));}});});";
+        //    var cmd = new EvaluateCommand()
+        //    {
+        //        AwaitPromise = true,
+        //        Expression = cmdstr
+        //    };
+
+        //    try
+        //    {
+        //        var res = await mmSession.SendCommand(cmd).ConfigureAwait(false) as EvaluateCommandResponse;
+        //        Console.WriteLine(res);
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex.Message);
+        //    }
+
+        //    return null;
+        //}
+
         /// <summary>
         /// Refreshes the currently playing track.</summary>
         public async Task RefreshCurrentTrackAsync()
@@ -100,24 +136,6 @@ namespace MediaMonkeyNet
 
             CurrentTrack = new Track(track, this);
             currentTrackRefreshInProgress = false;
-        }
-
-        /// <summary>Sets Rating of the track with the provided ID.</summary>
-        /// <param name="rating">Rating of the track between 0 and 100.</param>
-        /// <param name="ID">SongID property of the track.</param>
-        public Task SetRatingAsync(int rating, int ID)
-        {
-            return SendCommandAsync("app.getObject('track', { id:" + ID
-                + "}).then(function(track){ if (track) {track.rating ="
-                + rating + "; track.commitAsync();}});");
-        }
-
-        /// <summary>Sets Rating of the provided track.</summary>
-        /// <param name="rating">Rating of the track between 0 and 100.</param>
-        /// <param name="track">Track object of the track.</param>
-        public Task SetRatingAsync(int rating, Track track)
-        {
-            return SetRatingAsync(rating, track.ID);
         }
 
         /// <summary>Subscribes to the provided event.</summary>
