@@ -344,6 +344,8 @@ namespace MediaMonkeyNet
             asJSON = System.Text.RegularExpressions.Regex.Replace(asJSON, ",\"extendedTags\":\"\\[\\{.*\\}\\]\"}", "}");
 
             var asJsonObj = JsonConvert.DeserializeObject<AsJson>(asJSON, serializerSettings);
+            DateAdded = asJsonObj.DateAdded;
+            LastPlayed = asJsonObj.DateAdded;
         }
 
         /// <summary>Sets Rating of the track.</summary>
