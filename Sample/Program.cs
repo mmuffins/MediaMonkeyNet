@@ -9,8 +9,6 @@ namespace Sample
     {
         static async Task Main(string[] args)
         {
-            //await TestPerformance();
-
             // Initialize the object with default uri htt://localhost:9222.
             using (MediaMonkeySession mm = new MediaMonkeySession())
             {
@@ -26,11 +24,18 @@ namespace Sample
                     Console.WriteLine("Track Position in MS: " + mm.Player.TrackPosition);
 
                     // Update the currently playing track and display some information
-                    await mm.RefreshCurrentTrackAsync().ConfigureAwait(false);
-                    Console.WriteLine("Current Track:");
-                    Console.WriteLine("Title:" + mm.CurrentTrack.Title);
-                    Console.WriteLine("Artist:" + mm.CurrentTrack.Artist);
-                    Console.WriteLine("Rating:" + mm.CurrentTrack.Rating);
+                    try
+                    {
+                        await mm.RefreshCurrentTrackAsync().ConfigureAwait(false);
+                        Console.WriteLine("Current Track:");
+                        Console.WriteLine("Title:" + mm.CurrentTrack.Title);
+                        Console.WriteLine("Artist:" + mm.CurrentTrack.Artist);
+                        Console.WriteLine("Rating:" + mm.CurrentTrack.Rating);
+                    }
+                    catch (Newtonsoft.Json.JsonSerializationException ex)
+                    {
+                        Console.WriteLine("Error while updating the currently playing track:" + ex.Message);
+                    }
 
                     // Load album art for the current track
                     await mm.CurrentTrack.LoadAlbumArt();
@@ -77,42 +82,17 @@ namespace Sample
                         System.Threading.Thread.Sleep(4000);
                     }
                 }
-                catch (Exception)
+                catch (System.Net.Http.HttpRequestException ex)
                 {
-                    Console.WriteLine("Unable to communicate with MediaMonkey");
+                    Console.WriteLine("Connection error: " + ex.Message);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Unknown error: " + ex.Message);
                     return;
                 }
             }
-
-            Console.ReadLine();
-        }
-
-        static async Task TestPerformance()
-        {
-            var sw = new System.Diagnostics.Stopwatch();
-            var asyncTime = new TimeSpan();
-            var optimizedTime = new TimeSpan();
-
-
-            // Initialize the object with default uri htt://localhost:9222
-            using (MediaMonkeySession mm = new MediaMonkeySession())
-            {
-
-                await mm.OpenSessionAsync().ConfigureAwait(false);
-                await mm.Player.RefreshAsync().ConfigureAwait(false);
-
-                sw.Restart();
-                for (int i = 0; i < 500; i++) await mm.Player.TogglePlaybackAsync();
-                asyncTime = sw.Elapsed;
-
-                sw.Restart();
-                for (int i = 0; i < 500; i++) await mm.Player.TogglePlaybackAsync().ConfigureAwait(false);
-                optimizedTime = sw.Elapsed;
-            }
-
-            Console.WriteLine("Async: " + asyncTime);
-            Console.WriteLine("Optimized: " + optimizedTime);
-            Console.ReadLine();
         }
     }
 }

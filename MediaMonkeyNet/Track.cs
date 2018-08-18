@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,6 +13,20 @@ namespace MediaMonkeyNet
     /// <summary>Represents a song object.</summary>  
     public class Track
     {
+        private class AsJson
+        {
+            [JsonProperty]
+            [JsonConverter(typeof(SerialDateConverter))]
+            public DateTime LastTimePlayed { get; set; }
+
+            [JsonProperty]
+            [JsonConverter(typeof(SerialDateConverter))]
+            public DateTime DateAdded { get; set; }
+        }
+
+        [JsonProperty]
+        private string asJSON;
+
         [JsonProperty]
         public string Actors { get; private set; }
 
@@ -77,8 +92,7 @@ namespace MediaMonkeyNet
         [JsonProperty]
         public string Date { get; private set; }
 
-        ////[JsonProperty]
-        ////public DateTime DateAdded { get; private set; }
+        public DateTime DateAdded { get; private set; }
 
         [JsonProperty]
         public int Day { get; private set; }
@@ -102,10 +116,11 @@ namespace MediaMonkeyNet
         public string EpisodeNumber { get; private set; }
 
         [JsonProperty]
-        public double FileLength { get; private set; }
+        [JsonConverter(typeof(ExtendedTagsConverter))]
+        List<ExtendedTag> ExtendedTags { get; set; }
 
-        ////[JsonProperty("fileModified_UTC", NullValueHandling = NullValueHandling.Ignore)]
-        //public DateTime FileModified { get; private set; }
+        [JsonProperty]
+        public double FileLength { get; private set; }
 
         [JsonProperty]
         public string FileName { get; private set; }
@@ -140,8 +155,7 @@ namespace MediaMonkeyNet
         [JsonProperty]
         public bool IsPlaying { get; private set; }
 
-        //[JsonProperty]
-        //public DateTime LastPlayed { get; private set; }
+        public DateTime LastPlayed { get; private set; }
 
         [JsonProperty]
         public double VolumeLeveling { get; private set; }
@@ -311,7 +325,7 @@ namespace MediaMonkeyNet
         /// <param name="session">The <see cref="MediaMonkeySession"/> instance hosting the track.</param>
         public Track(RemoteObject trackObject, MediaMonkeySession session) : this(session)
         {
-            if(trackObject.Value is null) { return; }
+            if (trackObject.Value is null) { return; }
 
             var serializerSettings = new JsonSerializerSettings
             {
@@ -323,12 +337,13 @@ namespace MediaMonkeyNet
                 },
             };
 
-            var trackString = trackObject.Value.ToString();
-
-            // workaround for invalid json in mm alpha rev 2116
-            var trackJson = trackString.Replace("tempString\":\"\"\"extendedTags", "tempString\":\"\",\"extendedTags");
-
             JsonConvert.PopulateObject(trackObject.Value.ToString(), this, serializerSettings);
+
+            // workaround for invalid json in rev 2120
+            // Check if property string asJSON can be changed to AsJson asJson once the bug is fixed
+            asJSON = System.Text.RegularExpressions.Regex.Replace(asJSON, ",\"extendedTags\":\"\\[\\{.*\\}\\]\"}", "}");
+
+            var asJsonObj = JsonConvert.DeserializeObject<AsJson>(asJSON, serializerSettings);
         }
 
         /// <summary>Sets Rating of the track.</summary>
@@ -372,7 +387,9 @@ namespace MediaMonkeyNet
             catch (Exception)
             {
                 CoverList = null;
+                throw;
             }
         }
     }
 }
+
