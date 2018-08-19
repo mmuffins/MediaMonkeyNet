@@ -2,6 +2,9 @@ param (
 [string]$ProjectPath
 )
 
+# used in pre-build command as
+#powershell -NoProfile -ExecutionPolicy Bypass -NonInteractive -file $(ProjectDir)PreBuild.ps1 -ProjectPath $(ProjectPath)
+
 #Read csproj (XML)
 $xml = [xml](Get-Content $ProjectPath)
 
