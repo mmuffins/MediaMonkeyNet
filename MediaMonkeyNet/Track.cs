@@ -1,344 +1,397 @@
-﻿using System;
+﻿using BaristaLabs.ChromeDevTools.Runtime.Runtime;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
+using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
-using System.Reflection;
 
 namespace MediaMonkeyNet
 {
+    /// <summary>Represents a song object.</summary>  
     public class Track
     {
-        public string Actors { get; set; }
+        private class AsJson
+        {
+            [JsonProperty]
+            [JsonConverter(typeof(SerialDateConverter))]
+            public DateTime LastTimePlayed { get; set; }
 
-        public string AlbumArtistName { get; set; }
+            [JsonProperty]
+            [JsonConverter(typeof(SerialDateConverter))]
+            public DateTime DateAdded { get; set; }
+        }
 
+        [JsonProperty]
+        private string asJSON;
+
+        [JsonProperty]
+        public string Actors { get; private set; }
+
+        [JsonProperty]
+        public string AlbumArtist { get; private set; }
+
+        [JsonProperty]
         public int AlbumID { get; private set; }
 
-        public string AlbumName { get; set; }
+        [JsonProperty]
+        public string Album { get; private set; }
 
-        public string ArtistName { get; set; }
+        [JsonProperty]
+        public string Artist { get; private set; }
 
-        public string Author { get; set; }
+        [JsonProperty]
+        public string Author { get; private set; }
 
-        public int Bitrate { get; set; }
+        [JsonProperty]
+        public int Bitrate { get; private set; }
 
-        public int BPM { get; set; }
+        [JsonProperty]
+        public int BPM { get; private set; }
 
-        public string Conductor { get; set; }
+        [JsonProperty]
+        public string Conductor { get; private set; }
 
-        public string Copyright { get; set; }
+        [JsonProperty]
+        public string Copyright { get; private set; }
 
-        public string Custom1 { get; set; }
+        public List<Cover> CoverList { get; private set; }
 
-        public string Custom2 { get; set; }
+        [JsonProperty]
+        public string Custom1 { get; private set; }
 
-        public string Custom3 { get; set; }
+        [JsonProperty]
+        public string Custom2 { get; private set; }
 
-        public string Custom4 { get; set; }
+        [JsonProperty]
+        public string Custom3 { get; private set; }
 
-        public string Custom5 { get; set; }
+        [JsonProperty]
+        public string Custom4 { get; private set; }
 
-        public string Date { get; set; }
+        [JsonProperty]
+        public string Custom5 { get; private set; }
 
-        public DateTime DateAdded { get; set; }
+        [JsonProperty]
+        public string Custom6 { get; private set; }
 
-        public int Day { get; set; }
+        [JsonProperty]
+        public string Custom7 { get; private set; }
 
-        public string Director { get; set; }
+        [JsonProperty]
+        public string Custom8 { get; private set; }
 
-        public string DiscNumber { get; set; }
+        [JsonProperty]
+        public string Custom9 { get; private set; }
 
-        public string Encoder { get; set; }
+        [JsonProperty]
+        public string Custom10 { get; private set; }
 
-        public string EpisodeNumber { get; set; }
+        [JsonProperty]
+        public string Date { get; private set; }
 
-        public double FileLength { get; set; }
+        public DateTime DateAdded { get; private set; }
 
-        public DateTime FileModified { get; set; }
+        [JsonProperty]
+        public int Day { get; private set; }
 
+        [JsonProperty]
+        public bool Deleted { get; private set; }
+
+        [JsonProperty]
+        public string Director { get; private set; }
+
+        [JsonProperty]
+        public string DiscNumber { get; private set; }
+
+        [JsonProperty]
+        public int DiscNumberInt { get; private set; }
+
+        [JsonProperty]
+        public string Encoder { get; private set; }
+
+        [JsonProperty]
+        public string EpisodeNumber { get; private set; }
+
+        [JsonProperty]
+        [JsonConverter(typeof(ExtendedTagsConverter))]
+        List<ExtendedTag> ExtendedTags { get; set; }
+
+        [JsonProperty]
+        public double FileLength { get; private set; }
+
+        [JsonProperty]
         public string FileName { get; private set; }
 
+        [JsonProperty]
         public string FileType { get; private set; }
 
+        [JsonProperty]
         public int Frequency { get; private set; }
 
-        public string Genre { get; set; }
+        [JsonProperty]
+        public string Genre { get; private set; }
 
-        public string Grouping { get; set; }
+        [JsonProperty("groupDesc")]
+        public string Grouping { get; private set; }
 
-        public int ID { get; set; }
+        [JsonProperty]
+        public int ID { get; private set; }
 
-        public string InvolvedPeople { get; set; }
+        [JsonProperty]
+        public string InvolvedPeople { get; private set; }
 
-        public bool IsntInDB { get; set; }
+        [JsonProperty]
+        public bool IsntInDB { get; private set; }
 
-        public string ISRC { get; set; }
+        [JsonProperty]
+        public string ISRC { get; private set; }
 
+        [JsonProperty]
         public bool Isvideo { get; private set; }
 
-        public DateTime LastPlayed { get; set; }
+        [JsonProperty]
+        public bool IsPlaying { get; private set; }
 
-        public double Leveling { get; set; }
+        public DateTime LastPlayed { get; private set; }
 
-        public string Lyricist { get; set; }
+        [JsonProperty]
+        public double VolumeLeveling { get; private set; }
 
+        [JsonProperty]
+        public string Lyricist { get; private set; }
+
+        [JsonProperty]
+        public double MaxSample { get; private set; }
+
+        [JsonProperty("idMedia")]
         public int MediaID { get; private set; }
 
+        [JsonProperty]
         public string MediaLabel { get; private set; }
 
-        public int Month { get; set; }
+        [JsonProperty]
+        public long MediaSN { get; private set; }
 
-        public string Mood { get; set; }
+        [JsonProperty]
+        public string MimeType { get; private set; }
 
-        public string MusicComposer { get; set; }
+        [JsonProperty]
+        public int Month { get; private set; }
 
-        public string Occasion { get; set; }
+        [JsonProperty]
+        public string Mood { get; private set; }
 
-        public string OriginalArtist { get; set; }
+        [JsonProperty]
+        public double NormalizeAlbum { get; private set; }
 
-        public int OriginalDate { get; set; }
+        [JsonProperty]
+        public double NormalizeTrack { get; private set; }
 
-        public int OriginalDay { get; set; }
+        [JsonProperty]
+        public string Composer { get; private set; }
 
-        public string OriginalLyricist { get; set; }
+        [JsonProperty]
+        public string Occasion { get; private set; }
 
-        public int OriginalMonth { get; set; }
+        [JsonProperty]
+        public string ObjectType { get; private set; }
 
-        public string OriginalTitle { get; set; }
+        [JsonProperty("origArtist")]
+        public string OriginalArtist { get; private set; }
 
-        public int OriginalYear { get; set; }
+        [JsonProperty("origDate")]
+        public int OriginalDate { get; private set; }
 
-        public string ParentalRating { get; set; }
+        [JsonProperty("origDay")]
+        public int OriginalDay { get; private set; }
 
-        public string Path { get; set; }
+        [JsonProperty("origLyricist")]
+        public string OriginalLyricist { get; private set; }
 
+        [JsonProperty("origMonth")]
+        public int OriginalMonth { get; private set; }
+
+        [JsonProperty("origTitle")]
+        public string OriginalTitle { get; private set; }
+
+        [JsonProperty("origYear")]
+        public int OriginalYear { get; private set; }
+
+        [JsonProperty]
+        public string ParentalRating { get; private set; }
+
+        [JsonProperty]
+        public string Path { get; private set; }
+
+        [JsonProperty]
         public string PersistentID { get; private set; }
 
-        public int PlayCounter { get; set; }
+        [JsonProperty]
+        public int PlayCounter { get; private set; }
 
+        [JsonProperty]
         public int PlayListID { get; private set; }
 
-        public int PlaylistOrder { get; set; }
+        [JsonProperty]
+        public int PlaylistOrder { get; private set; }
 
-        public string Producer { get; set; }
+        [JsonProperty]
+        public string Producer { get; private set; }
 
-        public string Publisher { get; set; }
+        [JsonProperty]
+        public string Publisher { get; private set; }
 
-        public string Quality { get; set; }
+        [JsonProperty]
+        public string Quality { get; private set; }
 
-        public int Rating { get; set; }
+        [JsonProperty]
+        public int Rating { get; private set; }
 
-        public string SeasonNumber { get; set; }
+        [JsonProperty]
+        public string SeasonNumber { get; private set; }
 
-        public int SkipCount { get; set; }
+        /// <summary>Gets the <see cref="MediaMonkeySession"/> instance hosting the player.</summary>  
+        public MediaMonkeySession Session { get; }
 
+        [JsonProperty]
+        public int SkipCount { get; private set; }
+
+        [JsonProperty]
         public int SongID { get; private set; }
 
-        public int SongLength { get; set; }
+        [JsonProperty]
+        public int SongLength { get; private set; }
 
-        public int StartTime { get; set; }
+        [JsonProperty]
+        public int StartTime { get; private set; }
 
-        public int StopTime { get; set; }
+        [JsonProperty]
+        public string Stereo { get; private set; }
 
+        [JsonProperty]
+        public int StopTime { get; private set; }
+
+        [JsonProperty]
         public string Summary { get; private set; }
 
-        public string Tempo { get; set; }
+        [JsonProperty]
+        public string SyncId { get; private set; }
 
-        public string Title { get; set; }
+        [JsonProperty]
+        public string Tempo { get; private set; }
 
-        public string TrackOrder { get; set; }
+        [JsonProperty]
+        public int TemporaryOrder { get; private set; }
 
-        public int TrackType { get; set; }
+        [JsonProperty]
+        public string Title { get; private set; }
 
+        [JsonProperty]
+        public string TrackNumber { get; private set; }
+
+        [JsonProperty]
+        public int TrackNumberInt { get; private set; }
+
+        [JsonProperty]
+        public int TrackType { get; private set; }
+
+        [JsonProperty]
         public string TrackTypeStr { get; private set; }
 
-        public bool VBR { get; set; }
+        [JsonProperty]
+        public string trackTypeStringId { get; private set; }
 
-        public int Year { get; set; }
+        [JsonProperty]
+        public bool VBR { get; private set; }
 
+        [JsonProperty]
+        public string WebSource { get; private set; }
 
-        public Track(JObject Jobject)
+        [JsonProperty]
+        public int Year { get; private set; }
+
+        /// <summary>Initializes a new instance of the <see cref="Track"/> class.</summary>
+        /// <param name="session">The <see cref="MediaMonkeySession"/> instance hosting the track.</param>
+        public Track(MediaMonkeySession session)
         {
-            Actors = (string)Jobject.GetValue("actors");
-
-            AlbumArtistName = (string)Jobject.GetValue("albumArtist");
-
-            AlbumID = (int)Jobject.GetValue("idalbum");
-
-            AlbumName = (string)Jobject.GetValue("album");
-
-            ArtistName = (string)Jobject.GetValue("artist");
-
-            Author = (string)Jobject.GetValue("author");
-
-            Bitrate = (int)Jobject.GetValue("bitrate");
-
-            BPM = (int)Jobject.GetValue("bpm");
-
-            Conductor = (string)Jobject.GetValue("conductor");
-
-            Copyright = (string)Jobject.GetValue("copyright");
-
-            Custom1 = (string)Jobject.GetValue("custom1");
-
-            Custom2 = (string)Jobject.GetValue("custom2");
-
-            Custom3 = (string)Jobject.GetValue("custom3");
-
-            Custom4 = (string)Jobject.GetValue("custom4");
-
-            Custom5 = (string)Jobject.GetValue("custom5");
-
-            Date = (string)Jobject.GetValue("date");
-
-
-            var dateAdded_UTC = Jobject.GetValue("dateAdded_UTC");
-            if (dateAdded_UTC.HasValues)
-            {
-                DateTime.TryParse((string)dateAdded_UTC, out DateTime parsedDateAdded);
-                DateAdded = parsedDateAdded;
-            }
-
-            Day = (int)Jobject.GetValue("day");
-
-            Director = (string)Jobject.GetValue("director");
-
-            DiscNumber = (string)Jobject.GetValue("discNumber");
-
-            Encoder = (string)Jobject.GetValue("encoder");
-
-            EpisodeNumber = (string)Jobject.GetValue("episodeNumber");
-
-            FileLength = (double)Jobject.GetValue("fileLength");
-
-            var fileModified_UTC = Jobject.GetValue("fileModified_UTC");
-            if (fileModified_UTC.HasValues)
-            {
-                DateTime.TryParse((string)fileModified_UTC, out DateTime parsedFileModified);
-                FileModified = parsedFileModified;
-            }
-
-            FileName = (string)Jobject.GetValue("filename");
-
-            FileType = (string)Jobject.GetValue("fileType");
-
-            Frequency = (int)Jobject.GetValue("frequency");
-
-            Genre = (string)Jobject.GetValue("genre");
-
-            Grouping = (string)Jobject.GetValue("groupDesc");
-
-            ID = (int)Jobject.GetValue("id");
-
-            InvolvedPeople = (string)Jobject.GetValue("involvedPeople");
-
-            IsntInDB = (bool)Jobject.GetValue("isntInDB");
-
-            ISRC = (string)Jobject.GetValue("isrc");
-
-            Isvideo = (bool)Jobject.GetValue("isVideo");
-
-            var lastTimePlayed_UTC = Jobject.GetValue("lastTimePlayed_UTC");
-            if (lastTimePlayed_UTC.HasValues)
-            {
-                DateTime.TryParse((string)lastTimePlayed_UTC, out DateTime parsedLastPlayed);
-                LastPlayed = parsedLastPlayed;
-            }
-
-            Leveling = (double)Jobject.GetValue("volumeLeveling");
-
-            Lyricist = (string)Jobject.GetValue("lyricist");
-
-            MediaID = (int)Jobject.GetValue("idMedia");
-
-            MediaLabel = (string)Jobject.GetValue("mediaLabel");
-
-            Month = (int)Jobject.GetValue("month");
-
-            Mood = (string)Jobject.GetValue("mood");
-
-            MusicComposer = (string)Jobject.GetValue("composer");
-
-            Occasion = (string)Jobject.GetValue("occasion");
-
-            OriginalArtist = (string)Jobject.GetValue("origArtist");
-
-            OriginalDate = (int)Jobject.GetValue("origDate");
-
-            OriginalDay = (int)Jobject.GetValue("origDay");
-
-            OriginalLyricist = (string)Jobject.GetValue("origLyricist");
-
-            OriginalMonth = (int)Jobject.GetValue("origMonth");
-
-            OriginalTitle = (string)Jobject.GetValue("origTitle");
-
-            OriginalYear = (int)Jobject.GetValue("origYear");
-
-            ParentalRating = (string)Jobject.GetValue("parentalRating");
-
-            Path = (string)Jobject.GetValue("path");
-
-            PersistentID = (string)Jobject.GetValue("persistentID");
-
-            PlayCounter = (int)Jobject.GetValue("playCounter");
-
-            PlayListID = (int)Jobject.GetValue("idPlaylistSong");
-
-            PlaylistOrder = (int)Jobject.GetValue("playlistSongOrder");
-
-            Producer = (string)Jobject.GetValue("producer");
-
-            Publisher = (string)Jobject.GetValue("publisher");
-
-            Quality = (string)Jobject.GetValue("quality");
-
-            Rating = (int)Jobject.GetValue("rating");
-
-            SeasonNumber = (string)Jobject.GetValue("seasonNumber");
-
-            SkipCount = (int)Jobject.GetValue("skipCount");
-
-            SongID = (int)Jobject.GetValue("idsong");
-
-            SongLength = (int)Jobject.GetValue("songLength");
-
-            StartTime = (int)Jobject.GetValue("startTime");
-
-            StopTime = (int)Jobject.GetValue("stopTime");
-
-            Summary = (string)Jobject.GetValue("summary");
-
-            Tempo = (string)Jobject.GetValue("tempo");
-
-            Title = (string)Jobject.GetValue("title");
-
-            TrackOrder = (string)Jobject.GetValue("trackNumber");
-
-            TrackType = (int)Jobject.GetValue("trackType");
-
-            TrackTypeStr = (string)Jobject.GetValue("trackTypeStr");
-
-            VBR = (bool)Jobject.GetValue("vbr");
-
-            Year = (int)Jobject.GetValue("year");
+            Session = session;
         }
 
-        public EvaluateResponse<object> SetRating(MediaMonkeyNet RemoteSession, int rating)
+        /// <summary>Initializes a new instance of the <see cref="Track"/> class from a ChromeDevTools RemoteObject.</summary>
+        /// <param name="trackObject">The RemoteObject instance to deserialize.</param>
+        /// <param name="session">The <see cref="MediaMonkeySession"/> instance hosting the track.</param>
+        public Track(RemoteObject trackObject, MediaMonkeySession session) : this(session)
         {
-            /// <summary>
-            /// Sets Rating of the currently playing track
-            /// </summary>
-            /// <param name="RemoteSession">MediaMonkeyNet Remote Session</param>
-            /// <param name="rating">Rating of the track between 0 and 100</param>
+            if (trackObject.Value is null) { return; }
 
-            return RemoteSession.SetRating(rating, SongID);
+            var serializerSettings = new JsonSerializerSettings
+            {
+                MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
+                NullValueHandling = NullValueHandling.Ignore,
+                DateParseHandling = DateParseHandling.None,
+                Converters = {
+                        new IsoDateTimeConverter { DateTimeStyles = System.Globalization.DateTimeStyles.AssumeUniversal }
+                },
+            };
+
+            JsonConvert.PopulateObject(trackObject.Value.ToString(), this, serializerSettings);
+
+            // workaround for invalid json in rev 2120
+            // Check if property string asJSON can be changed to AsJson asJson once the bug is fixed
+            asJSON = System.Text.RegularExpressions.Regex.Replace(asJSON, ",\"extendedTags\":\"\\[\\{.*\\}\\]\"}", "}");
+
+            var asJsonObj = JsonConvert.DeserializeObject<AsJson>(asJSON, serializerSettings);
+            DateAdded = asJsonObj.DateAdded;
+            LastPlayed = asJsonObj.DateAdded;
         }
 
+        /// <summary>Sets Rating of the track.</summary>
+        /// <param name="rating">Rating of the track between 0 and 100.</param>
+        public Task SetRatingAsync(int rating)
+        {
+            return Session.SendCommandAsync("app.getObject('track', { id:" + ID
+                + "}).then(function(track){ if (track) {track.rating ="
+                + rating + "; track.commitAsync();}});");
+        }
+
+        /// <summary>Loads the album art list of the track.</summary>
+        public async Task LoadAlbumArt()
+        {
+            //var cmdString = "new Promise((resolve) => {" +
+            //    "app.getObject('track', { id:" + ID + "})" +
+            //    ".then(function(track){if (track) {" +
+            //    "var cover = track.loadCoverListAsync();" +
+            //    "var loadedPromise = cover.whenLoaded();" +
+            //    "loadedPromise.then(x => resolve(cover.asJSON));" +
+            //    "}});});";
+
+            var cmdString = "new Promise((resolve) => {app.getObject('track', { id:" + ID + "})" +
+                ".then(function(track){ if (track) {" +
+                "var cover = track.loadCoverListAsync();" +
+                "var loadedPromise = cover.whenLoaded();" +
+                "loadedPromise.then(x =>{ cList=[];" +
+                "cover.forEach(cvr=>{var cvrPath=cvr.picturePath;" +
+                "if(cvr.coverStorage==0){cvrPath=cvr.getThumb(500,500)};" +
+                "cList.push({coverTypeDesc:cvr.coverTypeDesc,persistentID:cvr.persistentID,pictureType:cvr.pictureType,coverStorage:cvr.coverStorage,description:cvr.description,picturePath:cvrPath})});" +
+                "resolve(cList)})}})})";
+
+            RemoteObject response = (await Session.SendCommandAsync(cmdString).ConfigureAwait(false)).Result;
+
+            if (response.Value is null) return;
+
+            try
+            {
+                CoverList = JsonConvert.DeserializeObject<List<Cover>>(response.Value.ToString());
+            }
+            catch (Exception)
+            {
+                CoverList = null;
+                throw;
+            }
+        }
     }
 }
 

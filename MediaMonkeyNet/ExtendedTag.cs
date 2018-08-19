@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace MediaMonkeyNet
 {
-    public interface IChromeResponse
+    public class ExtendedTag
     {
+        public string Title { get; }
+        public string Value { get; }
     }
 }
