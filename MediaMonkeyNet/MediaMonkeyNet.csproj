@@ -7,8 +7,10 @@
     <Description>A .net standard wrapper for the MediaMonkey 5 remote API.</Description>
     <Company>mmuffins</Company>
     <Authors>mmuffins</Authors>
-    <AssemblyVersion>2.1.361</AssemblyVersion>
-    <FileVersion>2.0.361</FileVersion>
+    <AssemblyVersion>2.1.362</AssemblyVersion>
+    <FileVersion>2.0.362</FileVersion>
+    <PackageTags>mediamonkey library</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -NonInteractive -file $(ProjectDir)PreBuild.ps1 -ProjectPath $(ProjectPath)" />
