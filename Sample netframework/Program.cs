@@ -1,9 +1,12 @@
 ﻿using BaristaLabs.ChromeDevTools.Runtime.Runtime;
 using MediaMonkeyNet;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace Sample
+namespace Sample_netframework
 {
     class Program
     {
