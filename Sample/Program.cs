@@ -9,15 +9,6 @@ namespace Sample
     {
         static async Task Main(string[] args)
         {
-            /* Steps to reproduce:
-             * - Make sure that MM5 is running before starting the application
-             * - Start the application 
-             * - Play a track by double clicking it in the main MM window
-             * - Verify that details for the currently playing track are written to the console
-             * - Change the track by clicking the Next File button in MM
-             * - The next execution of RefreshCurrentTrackAsync will trigger an exception
-             */
-
             // Initialize the object with default uri htt://localhost:9222.
             using (MediaMonkeySession mm = new MediaMonkeySession())
             {
