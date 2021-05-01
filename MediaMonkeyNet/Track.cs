@@ -36,10 +36,16 @@ namespace MediaMonkeyNet
         private string asJSON;
 
         [JsonProperty]
+        public string Actor { get; private set; }
+
+        [JsonProperty]
         public string Actors { get; private set; }
 
         [JsonProperty]
         public string AlbumArtist { get; private set; }
+
+        [JsonProperty]
+        public bool AllAddonsReaded { get; private set; }
 
         [JsonProperty("idalbum")]
         public int AlbumID { get; private set; }
@@ -54,10 +60,25 @@ namespace MediaMonkeyNet
         public string Author { get; private set; }
 
         [JsonProperty]
+        public int AutoTagState { get; private set; }
+
+        [JsonProperty]
         public int Bitrate { get; private set; }
 
         [JsonProperty]
         public int BPM { get; private set; }
+
+        [JsonProperty]
+        public int BPS { get; private set; }
+
+        [JsonProperty]
+        public int CacheStatus { get; private set; }
+
+        [JsonProperty]
+        public string CommentShort { get; private set; }
+
+        [JsonProperty]
+        public string Composer { get; private set; }
 
         [JsonProperty]
         public string Conductor { get; private set; }
@@ -109,13 +130,22 @@ namespace MediaMonkeyNet
         public bool Deleted { get; private set; }
 
         [JsonProperty]
+        public string Dimensions { get; private set; }
+
+        [JsonProperty]
         public string Director { get; private set; }
+
+        [JsonProperty]
+        public bool DirtyModified { get; private set; }
 
         [JsonProperty]
         public string DiscNumber { get; private set; }
 
         [JsonProperty]
         public int DiscNumberInt { get; private set; }
+
+        [JsonProperty]
+        public bool DontNotify { get; private set; }
 
         [JsonProperty]
         public string Encoder { get; private set; }
@@ -133,10 +163,16 @@ namespace MediaMonkeyNet
         public DateTime FileModified { get; private set; }
 
         [JsonProperty]
+        public string FileType { get; private set; }
+
+        [JsonProperty]
         public string FileName { get; private set; }
 
         [JsonProperty]
-        public string FileType { get; private set; }
+        public int FrameRate { get; private set; }
+
+        [JsonProperty]
+        public string FrameRateStr { get; private set; }
 
         [JsonProperty]
         public int Frequency { get; private set; }
@@ -148,7 +184,13 @@ namespace MediaMonkeyNet
         public string Grouping { get; private set; }
 
         [JsonProperty]
+        public int Height { get; private set; }
+
+        [JsonProperty]
         public int ID { get; private set; }
+
+        [JsonProperty]
+        public string InitialKey { get; private set; }
 
         [JsonProperty]
         public string InvolvedPeople { get; private set; }
@@ -157,21 +199,45 @@ namespace MediaMonkeyNet
         public bool IsntInDB { get; private set; }
 
         [JsonProperty]
-        public string ISRC { get; private set; }
+        public bool IsObservable { get; private set; }
 
         [JsonProperty]
-        public bool Isvideo { get; private set; }
+        public string ISRC { get; private set; }
 
         [JsonProperty]
         public bool IsPlaying { get; private set; }
 
+        [JsonProperty]
+        public bool IsStatusBarSource { get; private set; }
+
+        [JsonProperty]
+        public bool IsVideo { get; private set; }
+
+        [JsonProperty]
+        public bool IsYoutubeVideo { get; private set; }
+
+        [JsonProperty]
+        public string Language { get; private set; }
+
         public DateTime LastPlayed { get; private set; }
+
+        [JsonProperty]
+        public bool ListsModif { get; private set; }
 
         [JsonProperty]
         public double VolumeLeveling { get; private set; }
 
         [JsonProperty]
+        public bool LongTextLoaded { get; private set; }
+
+        [JsonProperty]
         public string Lyricist { get; private set; }
+
+        [JsonProperty]
+        public bool LyricsSearched { get; private set; }
+
+        [JsonProperty]
+        public string LyricsShort { get; private set; }
 
         [JsonProperty]
         public double MaxSample { get; private set; }
@@ -189,10 +255,16 @@ namespace MediaMonkeyNet
         public string MimeType { get; private set; }
 
         [JsonProperty]
+        public bool Modified { get; private set; }
+
+        [JsonProperty]
         public int Month { get; private set; }
 
         [JsonProperty]
         public string Mood { get; private set; }
+
+        [JsonProperty]
+        public bool NewlyScanned { get; private set; }
 
         [JsonProperty]
         public double NormalizeAlbum { get; private set; }
@@ -201,13 +273,13 @@ namespace MediaMonkeyNet
         public double NormalizeTrack { get; private set; }
 
         [JsonProperty]
-        public string Composer { get; private set; }
-
-        [JsonProperty]
         public string Occasion { get; private set; }
 
         [JsonProperty]
         public string ObjectType { get; private set; }
+
+        [JsonProperty]
+        public string OrganizedPath { get; private set; }
 
         [JsonProperty("origArtist")]
         public string OriginalArtist { get; private set; }
@@ -224,6 +296,7 @@ namespace MediaMonkeyNet
         [JsonProperty("origMonth")]
         public int OriginalMonth { get; private set; }
 
+        [JsonProperty]
         public string OriginalPath { get; private set; }
 
         [JsonProperty("origTitle")]
@@ -240,6 +313,12 @@ namespace MediaMonkeyNet
 
         [JsonProperty]
         public string PersistentID { get; private set; }
+
+        [JsonProperty]
+        public int PercentPlayed { get; private set; }
+
+        [JsonProperty]
+        public int PlaybackPos { get; private set; }
 
         [JsonProperty]
         public int PlayCounter { get; private set; }
@@ -265,6 +344,9 @@ namespace MediaMonkeyNet
         [JsonProperty]
         public string SeasonNumber { get; private set; }
 
+        [JsonProperty]
+        public bool Seekable { get; private set; }
+
         /// <summary>Gets the <see cref="MediaMonkeySession"/> instance hosting the player.</summary>  
         public MediaMonkeySession Session { get; }
 
@@ -287,7 +369,13 @@ namespace MediaMonkeyNet
         public int StopTime { get; private set; }
 
         [JsonProperty]
+        public string Subtitle { get; private set; }
+
+        [JsonProperty]
         public string Summary { get; private set; }
+
+        [JsonProperty]
+        public string SupportPin { get; private set; }
 
         [JsonProperty("sync_id")]
         public string SyncId { get; private set; }
@@ -323,6 +411,9 @@ namespace MediaMonkeyNet
 
         [JsonProperty]
         public string WebSource { get; private set; }
+
+        [JsonProperty]
+        public int Width { get; private set; }
 
         [JsonProperty]
         public int Year { get; private set; }
