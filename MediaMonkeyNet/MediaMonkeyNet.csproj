@@ -2,12 +2,12 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <PackageProjectUrl>https://github.com/mmuffins/MediaMonkeyNet</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/mmuffins/MediaMonkeyNet/blob/master/LICENSE</PackageLicenseUrl>
-    <Copyright>Copyright (c) 2018 Michael Kellner</Copyright>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <Copyright>Copyright (c) 2021 mmuffins</Copyright>
     <Description>A .net standard wrapper for the MediaMonkey 5 remote API.</Description>
     <Company>mmuffins</Company>
     <Authors>mmuffins</Authors>
-    <AssemblyVersion>2.2.0</AssemblyVersion>
+    <AssemblyVersion>2.2.1</AssemblyVersion>
     <FileVersion>2.2.0</FileVersion>
     <PackageTags>mediamonkey library</PackageTags>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
