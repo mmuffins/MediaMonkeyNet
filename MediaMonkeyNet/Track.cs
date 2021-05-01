@@ -219,7 +219,7 @@ namespace MediaMonkeyNet
         [JsonProperty]
         public string Language { get; private set; }
 
-        public DateTime LastPlayed { get; private set; }
+        public DateTime LastTimePlayed { get; private set; }
 
         [JsonProperty]
         public bool ListsModif { get; private set; }
@@ -446,7 +446,7 @@ namespace MediaMonkeyNet
 
             var asJsonObj = JsonConvert.DeserializeObject<AsJson>(asJSON, serializerSettings);
             DateAdded = asJsonObj.DateAdded;
-            LastPlayed = asJsonObj.DateAdded;
+            LastTimePlayed = asJsonObj.DateAdded;
             FileModified = asJsonObj.FileModified;
             TrackModified = asJsonObj.TrackModified;
         }
