@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MediaMonkeyNet
+﻿namespace MediaMonkeyNet
 {
     public class ExtendedTag
     {
-        public string Title { get; }
-        public string Value { get; }
+        public string Title { get; set; }
+        public string Value { get; set; }
     }
 }

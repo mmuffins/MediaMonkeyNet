@@ -339,10 +339,6 @@ namespace MediaMonkeyNet
 
             JsonConvert.PopulateObject(trackObject.Value.ToString(), this, serializerSettings);
 
-            // workaround for invalid json in rev 2120
-            // Check if property string asJSON can be changed to AsJson asJson once the bug is fixed
-            asJSON = System.Text.RegularExpressions.Regex.Replace(asJSON, ",\"extendedTags\":\"\\[\\{.*\\}\\]\"}", "}");
-
             var asJsonObj = JsonConvert.DeserializeObject<AsJson>(asJSON, serializerSettings);
             DateAdded = asJsonObj.DateAdded;
             LastPlayed = asJsonObj.DateAdded;

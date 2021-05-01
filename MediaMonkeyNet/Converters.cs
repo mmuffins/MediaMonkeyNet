@@ -11,7 +11,7 @@ namespace MediaMonkeyNet
     {
         public override bool CanConvert(Type objectType)
         {
-            return false;
+            return true;
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -19,21 +19,6 @@ namespace MediaMonkeyNet
             JToken token = JToken.Load(reader);
             if (token.Type == JTokenType.String)
             {
-                //workaround for invalid json in rev 2120
-                //string testString = "[{\"title\":\"ext1\",\"value\":\"extVal1\"},{\"title\":\"ext2\",\"value\":\"extVal2\"}]";
-                //var ab = JsonConvert.DeserializeObject<List<ExtendedTag>>(testString);
-                //string tokenString = token.ToObject<string>();
-                //var de = 
-
-                //List<ExtendedTag> ef = token.ToObject<List<ExtendedTag>>();
-                //if (tokenString.StartsWith("[{"))
-                //{
-                //    tokenString = tokenString.Remove(tokenString.Length - 1);
-                //    tokenString = tokenString.Remove(0, 1);
-                //}
-
-                //tokenString = tokenString.Replace("[{", "ee");
-
                 return JsonConvert.DeserializeObject<List<ExtendedTag>>(token.ToObject<string>());
             }
             return null;
