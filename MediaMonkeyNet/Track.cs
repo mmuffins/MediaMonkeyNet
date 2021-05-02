@@ -15,17 +15,48 @@ namespace MediaMonkeyNet
     {
         private class AsJson
         {
+            [JsonProperty("artworkModified_UTC")]
+            [JsonConverter(typeof(SerialDateConverter))]
+            public DateTime ArtworkModifiedUTC { get; set; }
+
             [JsonProperty]
             [JsonConverter(typeof(SerialDateConverter))]
             public DateTime LastTimePlayed { get; set; }
 
+            [JsonProperty("lastTimePlayed_UTC")]
+            [JsonConverter(typeof(SerialDateConverter))]
+            public DateTime LastTimePlayedUTC { get; set; }
+
             [JsonProperty]
             [JsonConverter(typeof(SerialDateConverter))]
             public DateTime DateAdded { get; set; }
+
+            [JsonProperty("dateAdded_UTC")]
+            [JsonConverter(typeof(SerialDateConverter))]
+            public DateTime DateAddedUTC { get; set; }
+
+            [JsonProperty]
+            [JsonConverter(typeof(SerialDateConverter))]
+            public DateTime FileModified { get; set; }
+
+            [JsonProperty("fileModified_UTC")]
+            [JsonConverter(typeof(SerialDateConverter))]
+            public DateTime FileModifiedUTC { get; set; }
+
+            [JsonProperty]
+            [JsonConverter(typeof(SerialDateConverter))]
+            public DateTime TrackModified { get; set; }
+
+            [JsonProperty("trackModified_UTC")]
+            [JsonConverter(typeof(SerialDateConverter))]
+            public DateTime TrackModifiedUTC { get; set; }
         }
 
         [JsonProperty]
         private string asJSON;
+
+        [JsonProperty]
+        public string Actor { get; private set; }
 
         [JsonProperty]
         public string Actors { get; private set; }
@@ -34,10 +65,15 @@ namespace MediaMonkeyNet
         public string AlbumArtist { get; private set; }
 
         [JsonProperty]
+        public bool AllAddonsReaded { get; private set; }
+
+        [JsonProperty("idalbum")]
         public int AlbumID { get; private set; }
 
         [JsonProperty]
         public string Album { get; private set; }
+
+        public DateTime ArtworkModifiedUTC { get; private set; }
 
         [JsonProperty]
         public string Artist { get; private set; }
@@ -46,10 +82,25 @@ namespace MediaMonkeyNet
         public string Author { get; private set; }
 
         [JsonProperty]
+        public int AutoTagState { get; private set; }
+
+        [JsonProperty]
         public int Bitrate { get; private set; }
 
         [JsonProperty]
         public int BPM { get; private set; }
+
+        [JsonProperty]
+        public int BPS { get; private set; }
+
+        [JsonProperty]
+        public int CacheStatus { get; private set; }
+
+        [JsonProperty]
+        public string CommentShort { get; private set; }
+
+        [JsonProperty]
+        public string Composer { get; private set; }
 
         [JsonProperty]
         public string Conductor { get; private set; }
@@ -94,6 +145,8 @@ namespace MediaMonkeyNet
 
         public DateTime DateAdded { get; private set; }
 
+        public DateTime DateAddedUTC { get; private set; }
+
         [JsonProperty]
         public int Day { get; private set; }
 
@@ -101,13 +154,22 @@ namespace MediaMonkeyNet
         public bool Deleted { get; private set; }
 
         [JsonProperty]
+        public string Dimensions { get; private set; }
+
+        [JsonProperty]
         public string Director { get; private set; }
+
+        [JsonProperty]
+        public bool DirtyModified { get; private set; }
 
         [JsonProperty]
         public string DiscNumber { get; private set; }
 
         [JsonProperty]
         public int DiscNumberInt { get; private set; }
+
+        [JsonProperty]
+        public bool DontNotify { get; private set; }
 
         [JsonProperty]
         public string Encoder { get; private set; }
@@ -122,11 +184,21 @@ namespace MediaMonkeyNet
         [JsonProperty]
         public double FileLength { get; private set; }
 
+        public DateTime FileModified { get; private set; }
+
+        public DateTime FileModifiedUTC { get; private set; }
+
+        [JsonProperty]
+        public string FileType { get; private set; }
+
         [JsonProperty]
         public string FileName { get; private set; }
 
         [JsonProperty]
-        public string FileType { get; private set; }
+        public int FrameRate { get; private set; }
+
+        [JsonProperty]
+        public string FrameRateStr { get; private set; }
 
         [JsonProperty]
         public int Frequency { get; private set; }
@@ -138,7 +210,13 @@ namespace MediaMonkeyNet
         public string Grouping { get; private set; }
 
         [JsonProperty]
+        public int Height { get; private set; }
+
+        [JsonProperty]
         public int ID { get; private set; }
+
+        [JsonProperty]
+        public string InitialKey { get; private set; }
 
         [JsonProperty]
         public string InvolvedPeople { get; private set; }
@@ -147,21 +225,47 @@ namespace MediaMonkeyNet
         public bool IsntInDB { get; private set; }
 
         [JsonProperty]
-        public string ISRC { get; private set; }
+        public bool IsObservable { get; private set; }
 
         [JsonProperty]
-        public bool Isvideo { get; private set; }
+        public string ISRC { get; private set; }
 
         [JsonProperty]
         public bool IsPlaying { get; private set; }
 
-        public DateTime LastPlayed { get; private set; }
+        [JsonProperty]
+        public bool IsStatusBarSource { get; private set; }
+
+        [JsonProperty]
+        public bool IsVideo { get; private set; }
+
+        [JsonProperty]
+        public bool IsYoutubeVideo { get; private set; }
+
+        [JsonProperty]
+        public string Language { get; private set; }
+
+        public DateTime LastTimePlayed { get; private set; }
+
+        public DateTime LastTimePlayedUTC { get; private set; }
+
+        [JsonProperty]
+        public bool ListsModif { get; private set; }
 
         [JsonProperty]
         public double VolumeLeveling { get; private set; }
 
         [JsonProperty]
+        public bool LongTextLoaded { get; private set; }
+
+        [JsonProperty]
         public string Lyricist { get; private set; }
+
+        [JsonProperty]
+        public bool LyricsSearched { get; private set; }
+
+        [JsonProperty]
+        public string LyricsShort { get; private set; }
 
         [JsonProperty]
         public double MaxSample { get; private set; }
@@ -179,10 +283,16 @@ namespace MediaMonkeyNet
         public string MimeType { get; private set; }
 
         [JsonProperty]
+        public bool Modified { get; private set; }
+
+        [JsonProperty]
         public int Month { get; private set; }
 
         [JsonProperty]
         public string Mood { get; private set; }
+
+        [JsonProperty]
+        public bool NewlyScanned { get; private set; }
 
         [JsonProperty]
         public double NormalizeAlbum { get; private set; }
@@ -191,13 +301,13 @@ namespace MediaMonkeyNet
         public double NormalizeTrack { get; private set; }
 
         [JsonProperty]
-        public string Composer { get; private set; }
-
-        [JsonProperty]
         public string Occasion { get; private set; }
 
         [JsonProperty]
         public string ObjectType { get; private set; }
+
+        [JsonProperty]
+        public string OrganizedPath { get; private set; }
 
         [JsonProperty("origArtist")]
         public string OriginalArtist { get; private set; }
@@ -213,6 +323,9 @@ namespace MediaMonkeyNet
 
         [JsonProperty("origMonth")]
         public int OriginalMonth { get; private set; }
+
+        [JsonProperty]
+        public string OriginalPath { get; private set; }
 
         [JsonProperty("origTitle")]
         public string OriginalTitle { get; private set; }
@@ -230,12 +343,18 @@ namespace MediaMonkeyNet
         public string PersistentID { get; private set; }
 
         [JsonProperty]
+        public int PercentPlayed { get; private set; }
+
+        [JsonProperty]
+        public int PlaybackPos { get; private set; }
+
+        [JsonProperty]
         public int PlayCounter { get; private set; }
 
-        [JsonProperty]
+        [JsonProperty("idPlaylistSong")]
         public int PlayListID { get; private set; }
 
-        [JsonProperty]
+        [JsonProperty("playlistSongOrder")]
         public int PlaylistOrder { get; private set; }
 
         [JsonProperty]
@@ -253,13 +372,16 @@ namespace MediaMonkeyNet
         [JsonProperty]
         public string SeasonNumber { get; private set; }
 
+        [JsonProperty]
+        public bool Seekable { get; private set; }
+
         /// <summary>Gets the <see cref="MediaMonkeySession"/> instance hosting the player.</summary>  
         public MediaMonkeySession Session { get; }
 
         [JsonProperty]
         public int SkipCount { get; private set; }
 
-        [JsonProperty]
+        [JsonProperty("idSong")]
         public int SongID { get; private set; }
 
         [JsonProperty]
@@ -275,9 +397,15 @@ namespace MediaMonkeyNet
         public int StopTime { get; private set; }
 
         [JsonProperty]
+        public string Subtitle { get; private set; }
+
+        [JsonProperty]
         public string Summary { get; private set; }
 
         [JsonProperty]
+        public string SupportPin { get; private set; }
+
+        [JsonProperty("sync_id")]
         public string SyncId { get; private set; }
 
         [JsonProperty]
@@ -288,6 +416,10 @@ namespace MediaMonkeyNet
 
         [JsonProperty]
         public string Title { get; private set; }
+
+        public DateTime TrackModified { get; private set; }
+
+        public DateTime TrackModifiedUTC { get; private set; }
 
         [JsonProperty]
         public string TrackNumber { get; private set; }
@@ -309,6 +441,9 @@ namespace MediaMonkeyNet
 
         [JsonProperty]
         public string WebSource { get; private set; }
+
+        [JsonProperty]
+        public int Width { get; private set; }
 
         [JsonProperty]
         public int Year { get; private set; }
@@ -339,13 +474,16 @@ namespace MediaMonkeyNet
 
             JsonConvert.PopulateObject(trackObject.Value.ToString(), this, serializerSettings);
 
-            // workaround for invalid json in rev 2120
-            // Check if property string asJSON can be changed to AsJson asJson once the bug is fixed
-            asJSON = System.Text.RegularExpressions.Regex.Replace(asJSON, ",\"extendedTags\":\"\\[\\{.*\\}\\]\"}", "}");
-
             var asJsonObj = JsonConvert.DeserializeObject<AsJson>(asJSON, serializerSettings);
             DateAdded = asJsonObj.DateAdded;
-            LastPlayed = asJsonObj.DateAdded;
+            LastTimePlayed = asJsonObj.LastTimePlayed;
+            FileModified = asJsonObj.FileModified;
+            TrackModified = asJsonObj.TrackModified;
+            ArtworkModifiedUTC = asJsonObj.ArtworkModifiedUTC;
+            DateAddedUTC = asJsonObj.DateAddedUTC;
+            LastTimePlayedUTC = asJsonObj.DateAddedUTC;
+            FileModifiedUTC = asJsonObj.FileModifiedUTC;
+            TrackModifiedUTC = asJsonObj.TrackModifiedUTC;
         }
 
         /// <summary>Sets Rating of the track.</summary>

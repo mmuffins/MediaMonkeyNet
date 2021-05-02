@@ -15,81 +15,35 @@ namespace Sample
                 try
                 {
                     // Establish a session to the chromium instance running MediaMonkey.
-                    await mm.OpenSessionAsync().ConfigureAwait(false);
-
-                    // The player object contains properties related to the current status of the player.
-                    await mm.Player.RefreshAsync().ConfigureAwait(false);
-                    Console.WriteLine("Player volume: " + mm.Player.Volume);
-                    Console.WriteLine("Shuffle is active: " + mm.Player.IsShuffle);
-                    Console.WriteLine("Track Position in MS: " + mm.Player.TrackPosition);
-
-                    // Update the currently playing track and display some information
-                    try
-                    {
-                        await mm.RefreshCurrentTrackAsync().ConfigureAwait(false);
-                        Console.WriteLine("Current Track:");
-                        Console.WriteLine("Title:" + mm.CurrentTrack.Title);
-                        Console.WriteLine("Artist:" + mm.CurrentTrack.Artist);
-                        Console.WriteLine("Rating:" + mm.CurrentTrack.Rating);
-                    }
-                    catch (Newtonsoft.Json.JsonSerializationException ex)
-                    {
-                        Console.WriteLine("Error while updating the currently playing track:" + ex.Message);
-                    }
-
-                    // Load album art for the current track
-                    await mm.CurrentTrack.LoadAlbumArt();
-
-                    // Start playback
-                    mm.Player.StartPlaybackAsync().GetAwaiter();
-
-                    // Update the rating of the currently playing track
-                    mm.CurrentTrack.SetRatingAsync(80).GetAwaiter();
-
-                    // Using SendCommandAsync it's possible to execute generic javascript code
-                    EvaluateCommandResponse currentSkin = await mm.SendCommandAsync("app.currentSkin();").ConfigureAwait(false);
-
-                    if (currentSkin.Result != null)
-                    {
-                        Console.WriteLine("Current Skin: " + currentSkin.Result.Value.ToString());
-                    }
-
-                    // Subscribe to an event
-                    var action = new Action<ConsoleAPICalledEvent>((ConsoleAPICalledEvent e) => {
-                        Console.WriteLine(e.Type + " event fired.");
-                    });
-
-                    await mm.Subscribe("app.player", "shufflechange", action).ConfigureAwait(false);
-
-                    // Enable automatic updates of the currently playing track and player state
-                    await mm.EnableUpdates().ConfigureAwait(false);
-
-                    // Also load album art when loading a new track
-                    mm.LoadAlbumArt = true;
+                    await mm.OpenSessionAsync();
 
                     while (true)
                     {
-                        // Track position and length are not automatically updated, they
-                        // need to be refreshed manually
-                        await mm.Player.RefreshTrackPositionAsync().ConfigureAwait(false);
+                        // Refresh data for the currently playing track
+                        await mm.RefreshCurrentTrackAsync();
+                        await mm.Player.RefreshAsync();
+
                         Console.WriteLine("Current Track:");
                         Console.WriteLine("Title:" + mm.CurrentTrack.Title);
                         Console.WriteLine("Artist:" + mm.CurrentTrack.Artist);
                         Console.WriteLine("Rating:" + mm.CurrentTrack.Rating);
-                        Console.WriteLine("Volume:" + mm.Player.Volume);
-                        Console.WriteLine("State:" + mm.Player.State.ToString());
-                        Console.WriteLine("Progress:" + mm.Player.Progress);
-                        System.Threading.Thread.Sleep(4000);
+                        Console.WriteLine("Position:" + TimeSpan.FromMilliseconds(mm.Player.TrackPosition));
+                        Console.WriteLine("Progress:" + mm.Player.Progress.ToString("P0"));
+                        Console.WriteLine("Player state:" + mm.Player.State);
+
+                        System.Threading.Thread.Sleep(2000);
                     }
                 }
                 catch (System.Net.Http.HttpRequestException ex)
                 {
                     Console.WriteLine("Connection error: " + ex.Message);
+                    Console.ReadLine();
                     return;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine("Unknown error: " + ex.Message);
+                    Console.ReadLine();
                     return;
                 }
             }
