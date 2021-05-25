@@ -108,6 +108,18 @@ namespace MediaMonkeyNet
             }
 
             currentTrackRefreshInProgress = false;
+            
+        }
+
+        public async Task WindowReady()
+        {
+            // Prevent concurrent calls
+            if (currentTrackRefreshInProgress) { return; }
+
+            currentTrackRefreshInProgress = true;
+            await SendCommandAsync("window.whenReady(() => app.currentSkin())").ConfigureAwait(false);
+
+            currentTrackRefreshInProgress = false;
         }
 
         /// <summary>Subscribes to the provided event.</summary>
