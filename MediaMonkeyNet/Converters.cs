@@ -58,7 +58,7 @@ namespace MediaMonkeyNet
         }
 
 
-        private static DateTime ConvertSerialToDateTime(double serialDate)
+        private static DateTime? ConvertSerialToDateTime(double serialDate)
         {
             // Workaround because DateTime.FromOADate is not available in .net standard 1.3 
             if (serialDate < 1)
