@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -470,6 +471,12 @@ namespace MediaMonkeyNet
                 Converters = {
                         new IsoDateTimeConverter { DateTimeStyles = System.Globalization.DateTimeStyles.AssumeUniversal }
                 },
+                Error = (object sender, Newtonsoft.Json.Serialization.ErrorEventArgs e) =>
+                {
+                    Debug.WriteLine($"An error occurred while deserializing property {e.ErrorContext.Path}.");
+                    Debug.WriteLine(e.ErrorContext.Error.ToString());
+                    e.ErrorContext.Handled = true;
+                }
             };
 
             JsonConvert.PopulateObject(trackObject.Value.ToString(), this, serializerSettings);
