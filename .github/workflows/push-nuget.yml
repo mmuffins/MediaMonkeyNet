@@ -3,7 +3,8 @@ name: push nuget
 on:
   workflow_dispatch:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
+  pull_request:
     
 env:
   base_version_number: "3.0.1"
@@ -62,6 +63,7 @@ jobs:
         path: ${{ github.workspace }}/publish
 
   deploy:
+    if: ${{ github.event_name != 'pull_request' }}
     permissions:
       contents: none
     runs-on: windows-latest
