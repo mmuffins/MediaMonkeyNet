@@ -29,10 +29,17 @@ jobs:
 
     - name: Setup msbuild
       uses: microsoft/setup-msbuild@v1.0.2
+      
+    - name: Set version number
+      shell: pwsh
+      run: |
+        $version = "${{ env.base_version_number }}.${{ github.run_number }}${{ github.run_attempt }}"
+        Write-Output "Setting version to $version"
+        "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
     - name: Build Solution
       shell: pwsh
-      run: dotnet build --configuration ${{ env.configuration }}
+      run: dotnet build --configuration ${{ env.configuration }} /p:Version=${{ env.VERSION }}
       
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
@@ -43,13 +50,6 @@ jobs:
     - name: Execute unit tests
       shell: pwsh
       run: dotnet test --configuration ${{ env.configuration }} --no-build
-      
-    - name: Set version number
-      shell: pwsh
-      run: |
-        $version = "${{ env.base_version_number }}.${{ github.run_number }}${{ github.run_attempt }}"
-        Write-Output "Setting version to $version"
-        "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
     - name: Pack nuget
       shell: pwsh
