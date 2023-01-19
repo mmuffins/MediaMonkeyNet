@@ -63,7 +63,7 @@ jobs:
         path: ${{ github.workspace }}/publish
 
   deploy:
-    if: ${{ github.event_name != 'pull_request' }}
+    if: ${{ github.event_name != 'pull_request'  && github.ref_name == 'main' }}
     environment: 'nuget'
     permissions:
       contents: none
