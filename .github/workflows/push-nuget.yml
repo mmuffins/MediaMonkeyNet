@@ -64,6 +64,7 @@ jobs:
 
   deploy:
     if: ${{ github.event_name != 'pull_request' }}
+    environment: 'nuget'
     permissions:
       contents: none
     runs-on: windows-latest
