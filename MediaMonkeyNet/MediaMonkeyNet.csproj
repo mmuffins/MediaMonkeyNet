@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <PackageProjectUrl>https://github.com/mmuffins/MediaMonkeyNet</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
-    <Copyright>Copyright (c) 2021 mmuffins</Copyright>
+    <Copyright>2023 mmuffins</Copyright>
     <Description>A .net standard wrapper for the MediaMonkey 5 remote API.</Description>
     <Company>mmuffins</Company>
     <Authors>mmuffins</Authors>

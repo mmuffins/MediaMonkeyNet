@@ -1,0 +1,69 @@
+name: push nuget
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "master" ]
+    
+env:
+  base_version_number: "3.0.1" 
+
+jobs:
+
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 5
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Install .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Setup msbuild
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Build Solution
+      shell: pwsh
+      run: dotnet build --configuration Release
+
+    - name: Execute unit tests
+      shell: pwsh
+      run: dotnet test --configuration Release --no-build
+      
+    - name: Set version number
+      shell: pwsh
+      run: |
+        $version = "${{ env.base_version_number }}.${{ github.run_number }}${{ github.run_attempt }}"
+        Write-Output "Setting version to $version"
+        "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+    - name: Pack nuget
+      shell: pwsh
+      run: |
+        dotnet pack MediaMonkeyNet --configuration Release --no-build --output "${{ github.workspace }}/publish" /p:PackageVersion=${{ env.VERSION }}
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: nuget
+        path: ${{ github.workspace }}/publish
+
+  deploy:
+    permissions:
+      contents: none
+    runs-on: windows-latest
+    needs: build
+
+    steps:
+    - name: Get artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: nuget
+        path: ${{ github.workspace }}/publish
+        

@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,39 +18,39 @@ namespace MediaMonkeyNet
         {
             [JsonProperty("artworkModified_UTC")]
             [JsonConverter(typeof(SerialDateConverter))]
-            public DateTime ArtworkModifiedUTC { get; set; }
+            public DateTime? ArtworkModifiedUTC { get; set; }
 
             [JsonProperty]
             [JsonConverter(typeof(SerialDateConverter))]
-            public DateTime LastTimePlayed { get; set; }
+            public DateTime? LastTimePlayed { get; set; }
 
             [JsonProperty("lastTimePlayed_UTC")]
             [JsonConverter(typeof(SerialDateConverter))]
-            public DateTime LastTimePlayedUTC { get; set; }
+            public DateTime? LastTimePlayedUTC { get; set; }
 
             [JsonProperty]
             [JsonConverter(typeof(SerialDateConverter))]
-            public DateTime DateAdded { get; set; }
+            public DateTime? DateAdded { get; set; }
 
             [JsonProperty("dateAdded_UTC")]
             [JsonConverter(typeof(SerialDateConverter))]
-            public DateTime DateAddedUTC { get; set; }
+            public DateTime? DateAddedUTC { get; set; }
 
             [JsonProperty]
             [JsonConverter(typeof(SerialDateConverter))]
-            public DateTime FileModified { get; set; }
+            public DateTime? FileModified { get; set; }
 
             [JsonProperty("fileModified_UTC")]
             [JsonConverter(typeof(SerialDateConverter))]
-            public DateTime FileModifiedUTC { get; set; }
+            public DateTime? FileModifiedUTC { get; set; }
 
             [JsonProperty]
             [JsonConverter(typeof(SerialDateConverter))]
-            public DateTime TrackModified { get; set; }
+            public DateTime? TrackModified { get; set; }
 
             [JsonProperty("trackModified_UTC")]
             [JsonConverter(typeof(SerialDateConverter))]
-            public DateTime TrackModifiedUTC { get; set; }
+            public DateTime? TrackModifiedUTC { get; set; }
         }
 
         [JsonProperty]
@@ -73,7 +74,7 @@ namespace MediaMonkeyNet
         [JsonProperty]
         public string Album { get; private set; }
 
-        public DateTime ArtworkModifiedUTC { get; private set; }
+        public DateTime? ArtworkModifiedUTC { get; private set; }
 
         [JsonProperty]
         public string Artist { get; private set; }
@@ -143,9 +144,9 @@ namespace MediaMonkeyNet
         [JsonProperty]
         public string Date { get; private set; }
 
-        public DateTime DateAdded { get; private set; }
+        public DateTime? DateAdded { get; private set; }
 
-        public DateTime DateAddedUTC { get; private set; }
+        public DateTime? DateAddedUTC { get; private set; }
 
         [JsonProperty]
         public int Day { get; private set; }
@@ -184,9 +185,9 @@ namespace MediaMonkeyNet
         [JsonProperty]
         public double FileLength { get; private set; }
 
-        public DateTime FileModified { get; private set; }
+        public DateTime? FileModified { get; private set; }
 
-        public DateTime FileModifiedUTC { get; private set; }
+        public DateTime? FileModifiedUTC { get; private set; }
 
         [JsonProperty]
         public string FileType { get; private set; }
@@ -245,9 +246,9 @@ namespace MediaMonkeyNet
         [JsonProperty]
         public string Language { get; private set; }
 
-        public DateTime LastTimePlayed { get; private set; }
+        public DateTime? LastTimePlayed { get; private set; }
 
-        public DateTime LastTimePlayedUTC { get; private set; }
+        public DateTime? LastTimePlayedUTC { get; private set; }
 
         [JsonProperty]
         public bool ListsModif { get; private set; }
@@ -417,9 +418,9 @@ namespace MediaMonkeyNet
         [JsonProperty]
         public string Title { get; private set; }
 
-        public DateTime TrackModified { get; private set; }
+        public DateTime? TrackModified { get; private set; }
 
-        public DateTime TrackModifiedUTC { get; private set; }
+        public DateTime? TrackModifiedUTC { get; private set; }
 
         [JsonProperty]
         public string TrackNumber { get; private set; }
@@ -470,6 +471,12 @@ namespace MediaMonkeyNet
                 Converters = {
                         new IsoDateTimeConverter { DateTimeStyles = System.Globalization.DateTimeStyles.AssumeUniversal }
                 },
+                Error = (object sender, Newtonsoft.Json.Serialization.ErrorEventArgs e) =>
+                {
+                    Debug.WriteLine($"An error occurred while deserializing property {e.ErrorContext.Path}.");
+                    Debug.WriteLine(e.ErrorContext.Error.ToString());
+                    e.ErrorContext.Handled = true;
+                }
             };
 
             JsonConvert.PopulateObject(trackObject.Value.ToString(), this, serializerSettings);

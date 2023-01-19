@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace MediaMonkeyNet
@@ -43,10 +44,16 @@ namespace MediaMonkeyNet
 
             if (token.Type == JTokenType.String)
             {
-                double dateVal;
-                if (double.TryParse(token.ToObject<string>(), out dateVal))
+                var tokenVal = token.ToObject<string>();
+                if (tokenVal is null || tokenVal == "0")
                 {
-                    return ConvertSerialToDateTime(dateVal);
+                    return null;
+                }
+
+                double dateVal;
+                if (double.TryParse(tokenVal, NumberStyles.Number, CultureInfo.InvariantCulture, out dateVal))
+                {
+                    return DateTime.FromOADate(dateVal);
                 }
             }
             return null;
@@ -57,26 +64,6 @@ namespace MediaMonkeyNet
             throw new NotImplementedException();
         }
 
-
-        private static DateTime ConvertSerialToDateTime(double serialDate)
-        {
-            // Workaround because DateTime.FromOADate is not available in .net standard 1.3 
-            if (serialDate < 1)
-            {
-                return DateTime.MinValue;
-            }
-
-            DateTime dateOfReference = new DateTime(1900, 1, 1);
-            if (serialDate > 60d)
-            {
-                serialDate = serialDate - 2;
-            }
-            else
-            {
-                serialDate = serialDate - 1;
-            }
-            return dateOfReference.AddDays(serialDate);
-        }
     }
 
 }
