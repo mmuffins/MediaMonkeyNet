@@ -76,4 +76,9 @@ jobs:
       with:
         name: nuget
         path: ${{ github.workspace }}/publish
-        
+
+    - name: Push to NuGet
+      shell: pwsh
+      run: |
+        Set-Location -Path '${{ github.workspace }}/publish'
+        dotnet nuget push "*.nupkg" --api-key ${{ secrets.nuget_api_key }} --source https://api.nuget.org/v3/index.json
