@@ -41,21 +41,10 @@ jobs:
         "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         "VERSION=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
-    - name: Tag commit
-      uses: actions/github-script@v5
-      with:
-        script: |
-          github.rest.git.createRef({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            ref: 'refs/tags/${{ env.VERSION }}',
-            sha: context.sha
-          })
-
     - name: Build Solution
       shell: pwsh
       run: dotnet build --configuration ${{ env.build_configuration }} /p:Version=${{ env.VERSION }}
-      
+
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
       with:
@@ -99,7 +88,7 @@ jobs:
           github.rest.git.createRef({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            ref: 'refs/tags/${{ env.VERSION }}',
+            ref: 'refs/tags/${{ needs.build.outputs.version }}',
             sha: context.sha
           })
 
@@ -121,6 +110,23 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Install .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Setup msbuild
+      uses: microsoft/setup-msbuild@v1.0.2
+      
+    - name: Set version number
+      id: set-versionX
+      shell: pwsh
+      run: |
+        $version = "${{ env.base_version_number }}.${{ github.run_number }}${{ github.run_attempt }}"
+        Write-Output "Setting version to $version"
+        "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        "VERSION=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
     - name: Tag commit
       uses: actions/github-script@v5
       with:
@@ -128,6 +134,6 @@ jobs:
           github.rest.git.createRef({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            ref: 'refs/tags/${{ needs.build.outputs.version }}',
+            ref: 'refs/tags/${{ env.VERSION }}',
             sha: context.sha
           })
