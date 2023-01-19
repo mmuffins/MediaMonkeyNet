@@ -8,7 +8,7 @@ on:
     
 env:
   base_version_number: "3.0.1"
-  configuration: "Release"
+  build_configuration: "Release"
 
 jobs:
 
@@ -54,22 +54,22 @@ jobs:
 
     - name: Build Solution
       shell: pwsh
-      run: dotnet build --configuration ${{ env.configuration }} /p:Version=${{ env.VERSION }}
+      run: dotnet build --configuration ${{ env.build_configuration }} /p:Version=${{ env.VERSION }}
       
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
       with:
         name: library
-        path: ${{ github.workspace }}/MediaMonkeyNet/bin/${{ env.configuration }}
+        path: ${{ github.workspace }}/MediaMonkeyNet/bin/${{ env.build_configuration }}
 
     - name: Execute unit tests
       shell: pwsh
-      run: dotnet test --configuration ${{ env.configuration }} --no-build
+      run: dotnet test --configuration ${{ env.build_configuration }} --no-build
 
     - name: Pack nuget
       shell: pwsh
       run: |
-        dotnet pack MediaMonkeyNet --configuration ${{ env.configuration }} --no-build --output "${{ github.workspace }}/publish" /p:PackageVersion=${{ env.VERSION }}
+        dotnet pack MediaMonkeyNet --configuration ${{ env.build_configuration }} --no-build --output "${{ github.workspace }}/publish" /p:PackageVersion=${{ env.VERSION }}
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
