@@ -2,10 +2,12 @@ name: push nuget
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ "main" ]
   pull_request:
-    
+  push:
+    branches: 
+      - main
+      - 'dependabot/**'
+
 env:
   base_version_number: "3.0.1"
   build_configuration: "Release"
