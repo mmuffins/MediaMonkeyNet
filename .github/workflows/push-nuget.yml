@@ -2,17 +2,23 @@ name: push nuget
 
 on:
   workflow_dispatch:
+  pull_request:
   push:
-    branches: [ "master" ]
-    
+    branches: 
+      - main
+      - 'dependabot/**'
+
 env:
-  base_version_number: "3.0.1" 
+  base_version_number: "3.0.1"
+  build_configuration: "Release"
 
 jobs:
 
   build:
     runs-on: windows-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
+    outputs:
+      version: ${{ steps.set-version.outputs.VERSION }}
 
     steps:
     - name: Checkout
@@ -27,26 +33,34 @@ jobs:
 
     - name: Setup msbuild
       uses: microsoft/setup-msbuild@v1.0.2
-
-    - name: Build Solution
-      shell: pwsh
-      run: dotnet build --configuration Release
-
-    - name: Execute unit tests
-      shell: pwsh
-      run: dotnet test --configuration Release --no-build
       
     - name: Set version number
+      id: set-version
       shell: pwsh
       run: |
         $version = "${{ env.base_version_number }}.${{ github.run_number }}${{ github.run_attempt }}"
         Write-Output "Setting version to $version"
         "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        "VERSION=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+    - name: Build Solution
+      shell: pwsh
+      run: dotnet build --configuration ${{ env.build_configuration }} /p:Version=${{ env.VERSION }}
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: library
+        path: ${{ github.workspace }}/MediaMonkeyNet/bin/${{ env.build_configuration }}
+
+    - name: Execute unit tests
+      shell: pwsh
+      run: dotnet test --configuration ${{ env.build_configuration }} --no-build
 
     - name: Pack nuget
       shell: pwsh
       run: |
-        dotnet pack MediaMonkeyNet --configuration Release --no-build --output "${{ github.workspace }}/publish" /p:PackageVersion=${{ env.VERSION }}
+        dotnet pack MediaMonkeyNet --configuration ${{ env.build_configuration }} --no-build --output "${{ github.workspace }}/publish" /p:PackageVersion=${{ env.VERSION }}
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
@@ -55,8 +69,8 @@ jobs:
         path: ${{ github.workspace }}/publish
 
   deploy:
-    permissions:
-      contents: none
+    if: ${{ github.event_name != 'pull_request'  && github.ref_name == 'main' }}
+    environment: 'nuget'
     runs-on: windows-latest
     needs: build
 
@@ -66,4 +80,20 @@ jobs:
       with:
         name: nuget
         path: ${{ github.workspace }}/publish
-        
+
+    - name: Tag commit
+      uses: actions/github-script@v5
+      with:
+        script: |
+          github.rest.git.createRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: 'refs/tags/${{ needs.build.outputs.version }}',
+            sha: context.sha
+          })
+
+    - name: Push to NuGet
+      shell: pwsh
+      run: |
+        Set-Location -Path '${{ github.workspace }}/publish'
+        dotnet nuget push "*.nupkg" --api-key ${{ secrets.nuget_api_key }} --source https://api.nuget.org/v3/index.json
